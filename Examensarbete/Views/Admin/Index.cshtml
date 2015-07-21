@@ -1,0 +1,16 @@
+﻿@using Domain.Entities;
+@model IEnumerable<Domain.Entities.Category>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+
+@foreach (Category category in Model)
+{ 
+    <text>@category.Name
+    <br />
+    </text>
+}
