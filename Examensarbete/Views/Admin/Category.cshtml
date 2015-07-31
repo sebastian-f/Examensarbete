@@ -1,0 +1,159 @@
+﻿<style>
+    td 
+    {
+        border: 1px solid black;
+        width: 80px;
+        height:80px;
+    }
+    td:hover {
+        background-color:lightblue;
+        cursor:pointer;
+        }
+    tr {
+        height:80px;
+    }
+    th
+    {
+        border: 1px solid black;
+        width:80px;
+        text-align:center;
+    }
+    #tdwPrice{
+        background-color:lightgreen;
+    }
+    #tdwPrice:hover{
+        background-color:lawngreen;
+    }
+    div span {
+        display:table-row;
+        vertical-align: middle;
+        text-align:center;
+        font-size:16px;
+        font-weight:bold;
+        height:65%;
+
+    }
+    tr td div {
+    display: table;
+        text-align: left;
+        width:100%;
+        height:100%;
+    }
+    #changePriceDiv{
+        display:table-cell;
+        padding-left:50px;
+    }
+    #insertJavascript{
+        display:table-cell;
+    }
+</style>
+
+
+@model Domain.Entities.Category
+
+@{
+    ViewBag.Title = "Category";
+}
+
+<h2>@Model.Name</h2>
+<h4>@Model.Description</h4>
+<br />
+
+
+<table id="insertJavascript"></table>
+<div id="changePriceDiv"></div>
+
+<br />
+
+@Html.ActionLink("Lägg till priser", "AddPriceToCategory", new { id = Model.Id }, new { @class = "btn btn-info" })
+
+<script type="text/javascript">
+    function showCalendar(m, y) {
+        var monthNameSwe = new Array(12); monthNameSwe[0] = "Januari"; monthNameSwe[1] = "Februari"; monthNameSwe[2] = "Mars"; monthNameSwe[3] = "April"; monthNameSwe[4] = "Maj"; monthNameSwe[5] = "Juni"; monthNameSwe[6] = "Juli"; monthNameSwe[7] = "Augusti"; monthNameSwe[8] = "September"; monthNameSwe[9] = "Oktober"; monthNameSwe[10] = "November"; monthNameSwe[11] = "December";
+        if (m == 12) {
+            m = 0;
+            y = y + 1;
+        }
+        if (m == -1) {
+            m = 11;
+            y = y - 1;
+        }
+        var date = new Date();
+        month = m;
+        year = y;
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        var firstDayOfMonth = new Date(year, month, 1).getDay();
+        if (firstDayOfMonth == 0) firstDayOfMonth = 7;
+        var numberOfCells = 35;
+        if ((daysInMonth + firstDayOfMonth - 1) > 35) numberOfCells = 42;
+
+        var day = 1;
+        var theSearchDay;
+
+        var calenderHtml = '<tr style="height:20px;border: 1px solid black"><th colspan="2" style="text-align:left;border:none"><input onclick="showCalendar(month-1,year)" type="button" value="<" /></th><th colspan="3" style="border:none">' + monthNameSwe[month] + ' ' + year + '</th><th colspan="2" style="text-align:right;border:none"><input onclick="showCalendar(month+1,year)" type="button" value=">" /></th></tr><tr style="height:20px"><th>Måndag</th><th>Tisdag</th><th>Onsdag</th><th>Torsdag</th><th>Fredag</th><th>Lördag</th><th>Söndag</th></tr><tr>';
+
+        for (var i = 1; i <= numberOfCells; i++) {
+            if (firstDayOfMonth <= i && day <= daysInMonth) {
+                theSearchDay = searchDate(year, (month + 1), day);
+                calenderHtml += "<td onClick='dateClick(" + year + "," + (month + 1) + "," + day + ")'><div>" + day;
+                if (theSearchDay != undefined) {
+                    calenderHtml += "<span>" + theSearchDay.thePrice + "</span>";
+                }
+                calenderHtml += "</div></td>";
+                day++;
+            }
+            else {
+                calenderHtml += "<td></td>";
+            }
+
+            if (i % 7 == 0) {
+                calenderHtml += "</tr><tr>";
+            }
+        }
+
+        calenderHtml += "</tr>";
+        document.getElementById("insertJavascript").innerHTML = calenderHtml;
+    }
+
+    function searchDate(theYear, theMonth, theDay) {
+        if (theYear == undefined || theMonth == undefined || theDay == undefined) return undefined;
+        if ((theMonth + "").length == 1) theMonth = "0" + theMonth;
+        if ((theDay + "").length == 1) { theDay = "0" + theDay; }
+        for (var i = 0; i < pricePerDayJS.length; i++) {
+            if (pricePerDayJS[i].theDate == (theYear + "-" + theMonth + "-" + theDay)) {
+                return pricePerDayJS[i];
+            }
+        }
+    }
+
+    function dateClick(theYear, theMonth, theDay) {
+        dateToChangePriceFor = searchDate(theYear, theMonth, theDay);
+        var newPriceLinkAddress;
+        if (dateToChangePriceFor == undefined) {
+            if ((theMonth + "").length == 1) theMonth = "0" + theMonth;
+            if ((theDay + "").length == 1) { theDay = "0" + theDay; }
+            var dateString = theYear + "-" + theMonth + "-" + theDay;
+            newPriceLinkAddress = '@Url.Action("AddPriceToCategory", new { id = Model.Id})' + '?date=' + dateString;
+            document.getElementById("changePriceDiv").innerHTML = "<b>Datum:</b> " + dateString + "</br><b>Pris:</b> Det finns inget pris satt för detta datum</br><a href='" + newPriceLinkAddress + "' class='btn btn-info'>Nytt pris</a>";
+        } else {
+            newPriceLinkAddress = '@Url.Action("AddPriceToCategory", new { id = Model.Id})' + '?date=' + dateToChangePriceFor.theDate;
+            document.getElementById("changePriceDiv").innerHTML = "<b>Datum:</b> " + dateToChangePriceFor.theDate + "</br><b>Pris:</b> " + dateToChangePriceFor.thePrice + "kr</br><a href='"+newPriceLinkAddress+"' class='btn btn-info'>Ändra pris</a>";
+        }
+    }
+
+    var date = new Date();
+    var month = date.getMonth();
+    var year = date.getFullYear();
+
+    var pricePerDayJS = [];
+    @{
+        foreach (var dt in Model.PricePerDay)
+        {
+            <text>
+    pricePerDayJS.push({ theDate: "@dt.CheckinDate.ToString("yyyy-MM-dd")", theId: "@dt.Id", thePrice: "@dt.Price" });
+    </text>
+        }
+    }
+
+    showCalendar(month, year);
+</script>

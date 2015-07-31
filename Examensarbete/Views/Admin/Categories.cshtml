@@ -10,7 +10,12 @@
 
 @foreach (Category category in Model)
 { 
-    <text>@category.Name
+    <text>
+    @Html.ActionLink(category.Name,"Category",new {id=category.Id})
     <br />
     </text>
 }
+
+
+<br /><br />
+@Html.ActionLink("New Category","AddCategory")

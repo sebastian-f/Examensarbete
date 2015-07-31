@@ -30,7 +30,7 @@ namespace Examensarbete.Tests.Controllers
             AdminController controller = new AdminController(mock.Object);
 
             // Act   
-            ViewResult result = controller.Index() as ViewResult;
+            ViewResult result = controller.Categories() as ViewResult;
 
             // Assert    
             IEnumerable<Category> categories = result.Model as IEnumerable<Category>;

@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Category
+    public class DatePrice
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public ICollection<DatePrice> PricePerDay { get; set; }
+        public DateTime CheckinDate { get; set; }
+        public double Price { get; set; }
     }
 }

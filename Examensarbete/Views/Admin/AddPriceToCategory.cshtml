@@ -1,0 +1,28 @@
+﻿@model Examensarbete.Models.AddPriceViewModel
+
+@{
+    ViewBag.Title = "Add price to roomcategory";
+}
+
+<h2>Add price to category</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m=>m.CategoryId)
+    <br />
+    @Html.Label("Pris")
+    <br />
+    @Html.TextBoxFor(m=>m.Price)
+    <br /><br />
+    
+    @Html.Label("Välj första och sista incheckningsdatum")
+    <br />
+    @Html.TextBoxFor(m => m.FirstDay, "{0:yyyy-MM-dd}") 
+    @Html.TextBoxFor(m => m.LastDay, "{0:yyyy-MM-dd}")
+    <br /><br />
+    <input type="submit" value="Spara" />
+    <br />
+    <br />
+    @Html.ActionLink("Tillbaka", "Category", new { id = Model.CategoryId }, new {@class="btn btn-info" })
+}
+
