@@ -2,10 +2,11 @@
 @model IEnumerable<Domain.Entities.Category>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Kategorier";
+    Layout = "AdminLayout.cshtml";
 }
 
-<h2>Index</h2>
+<h2>Kategorier</h2>
 
 
 @foreach (Category category in Model)
@@ -18,4 +19,4 @@
 
 
 <br /><br />
-@Html.ActionLink("New Category","AddCategory")
+@Html.ActionLink("Skapa ny kategori", "AddCategory", new { }, new { @class="btn btn-info"})

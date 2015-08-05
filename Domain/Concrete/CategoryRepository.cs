@@ -57,5 +57,17 @@ namespace Domain.Concrete
             }
             context.SaveChanges();
         }
+
+
+        public void AddRoom(Room room, int categoryId)
+        {
+            if(room.Id==0)
+            {
+                Category category = Get(categoryId);
+                room.TheCategory = category;
+            }
+            context.Rooms.Add(room);
+            context.SaveChanges();
+        }
     }
 }

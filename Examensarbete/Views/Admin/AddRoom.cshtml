@@ -1,0 +1,25 @@
+﻿@model Examensarbete.Models.AddRoomViewModel
+
+@{
+    ViewBag.Title = "Add room";
+    Layout = "AdminLayout.cshtml";
+}
+
+<h2>Add room</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.Label("Rumsnummer/namn")
+    <br />
+    @Html.TextBoxFor(m => m.RoomNumber)
+    <br /><br />
+
+    @Html.Label("Välj kategori")
+    <br />
+    @Html.DropDownList("categoryId",Model.Categories)
+    <br /><br />
+    <input type="submit" value="Spara" class="btn btn-info" />
+    <br />
+    <br />
+    
+}

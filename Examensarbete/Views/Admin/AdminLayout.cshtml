@@ -1,0 +1,29 @@
+﻿<style>
+    #leftDiv {
+        width: 150px;
+        float: left;
+    }
+
+    #thecontent {
+        margin-left: 170px;
+    }
+</style>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+
+    <div id="leftDiv">
+        @Html.Partial("AdminMenu")
+    </div>
+
+    <div id="thecontent">
+        @RenderBody()
+    </div>
+    <div style="clear:both">
+
+    </div>
+
+</div>

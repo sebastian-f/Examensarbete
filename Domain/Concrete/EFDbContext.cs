@@ -16,6 +16,6 @@ namespace Domain.Concrete
         }
 
         public DbSet<Category> Categories { get; set; }
-        //public DbSet<DatePrice> PricePerDay { get; set; }
+        public DbSet<Room> Rooms { get; set; }
     }
 }

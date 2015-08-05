@@ -13,5 +13,6 @@ namespace Domain.Abstract
         Category Get(int id);
         Category Add(Category category);
         void AddOrUpdateDaypriceForCategory(int categoryId,double price,DateTime date);
+        void AddRoom(Room room, int categoryId);
     }
 }

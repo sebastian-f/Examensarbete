@@ -16,7 +16,10 @@ namespace Examensarbete.Controllers
         {
             this.categoryRepository = categoryRepository;        
         }
-
+        public ActionResult Index()
+        {
+            return View();
+        }
         public ActionResult Categories()
         {
             return View(categoryRepository.Categories);
@@ -71,6 +74,26 @@ namespace Examensarbete.Controllers
                 return RedirectToAction("Category", new { id = prices.CategoryId });
             }
 
+            return RedirectToAction("Categories");
+        }
+        [HttpGet]
+        public ActionResult AddRoom()
+        {
+            AddRoomViewModel addRoomModel = new AddRoomViewModel();
+            List<SelectListItem> listItems = new List<SelectListItem>();
+            IEnumerable<Category> categories = categoryRepository.Categories.ToList();
+            foreach(Category category in categories)
+            {
+                listItems.Add(new SelectListItem() { Text = category.Name, Value = category.Id.ToString() });
+            }
+            addRoomModel.Categories = listItems;
+            return View(addRoomModel);
+        }
+        [HttpPost]
+        public ActionResult AddRoom(AddRoomViewModel addRoomModel,int categoryId)
+        {
+            Room room = new Room() { RoomNumber = addRoomModel.RoomNumber };
+            categoryRepository.AddRoom(room, categoryId);
             return RedirectToAction("Categories");
         }
     }
