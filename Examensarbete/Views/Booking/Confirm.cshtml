@@ -1,0 +1,27 @@
+﻿@using Examensarbete.Models;
+@model Examensarbete.Models.MakeBooking
+
+@{
+    ViewBag.Title = "Confirm";
+}
+
+<h2>Slutför bokning</h2>
+
+Från: @Model.CheckInDate.ToShortDateString() <br />
+Till: @Model.CheckOutDate.ToShortDateString() <br />
+
+@foreach(RoomCategory roomCategory in Model.RoomCategories){
+    if(roomCategory.NumberOfRooms>0)
+    {
+        <span>@roomCategory.NumberOfRooms.ToString()  @roomCategory.Name</span>
+    <br />
+    }
+}
+
+Pris: @(Model.Price + " kr") <br /><br />
+
+@using(Html.BeginForm())
+{
+    <input type="submit" value="Boka!" />
+    
+}

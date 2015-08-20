@@ -1,0 +1,94 @@
+﻿@using Examensarbete.Models
+@model Examensarbete.Models.MakeBooking
+@{
+    ViewBag.Title = "Rooms";
+}
+
+<style>
+    th,td{
+        padding:7px;
+    }
+</style>
+
+<h2>Välj rum</h2>
+<br />
+
+Checkin:
+@Model.CheckInDate.ToShortDateString()
+<br />
+Checkut:
+@Model.CheckOutDate.ToShortDateString()
+
+<br /><br />
+
+<table>
+    <tr><th><h4>Typ</h4></th><th><h4>Antal</h4></th><th><h4>Pris per rum<br />och vistelse</h4></th><th style="text-align:right">Totalt</th></tr>
+@using(Html.BeginForm())
+{
+    for (int i = 0; i < Model.RoomCategories.Count;i++ )
+    { 
+        <tr><td>
+        @Html.HiddenFor(m=>m.RoomCategories[i].CategoryId)
+        @Html.Label(Model.RoomCategories[i].Name) 
+            </td><td>
+        @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
+            </td>
+            <td>
+                @Html.Label(Model.RoomCategories[i].PriceForChoosenDates.ToString()) kr
+            </td>
+            <td style="text-align:right">
+                <span id="sumCat@(Model.RoomCategories[i].CategoryId)">0</span> kr
+            </td>
+        </tr>
+    }
+    <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">0</span> kr</td></tr>
+    <tr><td></td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
+}
+
+    </table>
+<br />
+<span style="color:darkred">
+    @ViewBag.ErrorMessage
+</span>
+<br /><br />
+@Html.ActionLink("Tillbaka","Index")
+
+
+
+
+<script>
+
+    function countSum() {
+
+        @{var ids = Model.RoomCategories.Select(m=>m.CategoryId).ToArray();}
+        
+        var catIds = [];
+        @foreach(RoomCategory category in Model.RoomCategories)
+        {
+            <text>
+                catIds.push({id: "@category.CategoryId" ,price: "@category.PriceForChoosenDates"});
+        </text>
+        }
+
+        var totalSum = 0;
+        var numberOfRooms=0;
+        catIds.forEach(function (cId) {
+            numberOfRooms = parseInt($("#"+cId.id).val());
+            $("#sumCat" + cId.id).text(numberOfRooms * cId.price);
+            totalSum = totalSum + parseInt($("#sumCat" + cId.id).text());
+        });
+        
+        $("#totalSum").text("Summa: " + totalSum);
+        
+    }
+
+
+    function inputChange() {
+        countSum();
+        $('input').on('input', function () {
+            countSum();
+        });
+    }
+    window.onload = inputChange;
+
+</script>

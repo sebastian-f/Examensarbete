@@ -11,5 +11,6 @@ namespace Domain.Entities
         public int Id { get; set; }
         public string  RoomNumber { get; set; }
         public Category TheCategory { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
     }
 }

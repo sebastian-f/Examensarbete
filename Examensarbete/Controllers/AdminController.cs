@@ -94,7 +94,7 @@ namespace Examensarbete.Controllers
         {
             Room room = new Room() { RoomNumber = addRoomModel.RoomNumber };
             categoryRepository.AddRoom(room, categoryId);
-            return RedirectToAction("Categories");
+            return RedirectToAction("Index");
         }
     }
 }

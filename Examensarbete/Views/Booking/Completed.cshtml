@@ -1,0 +1,21 @@
+﻿@using Examensarbete.Models;
+@model Examensarbete.Models.MakeBooking
+@{
+    ViewBag.Title = "Completed";
+}
+
+<h2>Tack för din bokning!</h2>
+<br />
+Ditt bokningsnummer är: @Model.Id <br />
+@foreach(RoomCategory category in Model.RoomCategories)
+{
+    if(category.NumberOfRooms>0)
+    { 
+    <span>@(category.NumberOfRooms + " " + category.Name)</span>
+    }
+}
+<br />
+Från: @Model.CheckInDate.ToShortDateString() <br />
+Till: @Model.CheckOutDate.ToShortDateString() <br />
+@("Pris: " + Model.Price + " kr")
+

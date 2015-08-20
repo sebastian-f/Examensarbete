@@ -1,0 +1,197 @@
+﻿using Domain.Abstract;
+using Domain.Entities;
+using Examensarbete.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+
+namespace Examensarbete.Controllers
+{
+    //Make a reservation. 3 steps, choose date(checkin, checkout), select category(rooms), and confirm. 
+    //Guest have to be member/logged in to confirm.
+    public class BookingController : Controller
+    {
+        ICategoryRepository categoryRepository;
+        IBookingRepository bookingRepository;
+        public BookingController(ICategoryRepository categoryRepository,IBookingRepository bookingRepository)
+        {
+            this.categoryRepository = categoryRepository;
+            this.bookingRepository = bookingRepository;
+        }
+
+        // GET: Booking
+        public ActionResult Index()
+        {
+            MakeBooking booking = GetMakeBookingSession();
+            if (booking.CheckInDate<DateTime.Now.Date) booking.CheckInDate = DateTime.Now;
+            if (booking.CheckOutDate<DateTime.Now.Date) booking.CheckOutDate = booking.CheckInDate.AddDays(1);
+            return View(booking);
+        }
+        //Post checkin and checkout date
+        [HttpPost]
+        public ActionResult Index(MakeBooking booking)
+        {
+            MakeBooking bookingSession = GetMakeBookingSession();
+            bookingSession.CheckInDate = booking.CheckInDate;
+            bookingSession.CheckOutDate = booking.CheckOutDate;
+            //Clear "NumberOfRooms" for each category, if user try to change date and then go to Confirm.
+            //Or check this in Confirm and send user back to Rooms or Index
+            for (int i = 0; i < bookingSession.RoomCategories.Count;i++)
+            {
+                bookingSession.RoomCategories[i].NumberOfRooms = 0;
+            }
+                SaveMakeBookingSession(bookingSession);
+            return RedirectToAction("Rooms");
+        }
+
+        //Choose number of rooms in each category
+        public ActionResult Rooms()
+        {
+            MakeBooking booking = GetMakeBookingSession();
+            if(booking.CheckInDate<DateTime.Now.Date || booking.CheckOutDate<=booking.CheckInDate)
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                double price;
+                foreach (RoomCategory category in booking.RoomCategories)
+                {
+                    price = categoryRepository.GetPriceForDates(category.CategoryId, booking.CheckInDate, booking.CheckOutDate);
+                    booking.RoomCategories.Where(c => c.CategoryId == category.CategoryId).First().PriceForChoosenDates = price;
+                }
+            }
+
+            if (TempData["isAvailable"] != null)
+            {
+                if (TempData["isAvailable"].ToString() == "false") ViewBag.ErrorMessage = "Det finns inte tillräckligt med lediga rum under perioden du valt. Prova ett annat datum eller typ av rum.";
+            }
+            return View(booking);
+        }
+
+        [HttpPost]
+        public ActionResult Rooms(MakeBooking makeBooking)
+        {
+            MakeBooking booking = GetMakeBookingSession();
+            if(booking.RoomCategories.Count != makeBooking.RoomCategories.Count) return RedirectToAction("Rooms");
+            foreach(RoomCategory roomCategory in booking.RoomCategories)
+            {
+                int nrRooms = makeBooking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms;
+                booking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms = nrRooms;
+            }
+            SaveMakeBookingSession(booking);
+
+            #region checkIfAvailable
+            bool available;
+            foreach (RoomCategory roomCategory in booking.RoomCategories)
+            {
+                if (roomCategory.NumberOfRooms > 0)
+                {
+                    available = bookingRepository.CheckAvailableRooms(roomCategory.CategoryId, roomCategory.NumberOfRooms, booking.CheckInDate, booking.CheckOutDate);
+
+                    if (available == false)
+                    {
+                        TempData["isAvailable"] = "false";
+                        return RedirectToAction("Rooms");
+                    }
+
+                }
+            }
+            #endregion
+
+            return RedirectToAction("Confirm");
+        }
+         [HttpGet]
+        public ActionResult Confirm()
+        {
+            MakeBooking bookingSession = GetMakeBookingSession();
+            bool available;
+            int numberOfRooms = bookingSession.RoomCategories.Sum(r => r.NumberOfRooms);
+            if (numberOfRooms < 1) return RedirectToAction("Rooms"); 
+            foreach (RoomCategory roomCategory in bookingSession.RoomCategories)
+            {
+                if (roomCategory.NumberOfRooms > 0)
+                {
+                    available = bookingRepository.CheckAvailableRooms(roomCategory.CategoryId, roomCategory.NumberOfRooms, bookingSession.CheckInDate, bookingSession.CheckOutDate);
+                    //If there are no available rooms in category, redirect to rooms
+                    //TODO: Error message: "change date or roomType(category)"
+                    if (available == false)
+                    {
+                        TempData["isAvailable"] = false;
+                        return RedirectToAction("Rooms"); 
+                    }
+
+                }
+            }
+             //TODO: The price should be calculated in a service-method
+            bookingSession.Price = bookingSession.RoomCategories.Sum(c=>c.NumberOfRooms*c.PriceForChoosenDates);
+            return View(bookingSession);
+        }
+        [HttpPost]
+        public ActionResult Confirm(MakeBooking makeBooking=null)
+        {
+            makeBooking = GetMakeBookingSession();
+            Booking booking = new Booking() {CheckInDate=makeBooking.CheckInDate,CheckOutDate=makeBooking.CheckOutDate};
+            booking.Rooms = new List<Room>();
+            foreach(RoomCategory room in makeBooking.RoomCategories)
+            {
+                for (int i = 0; i < room.NumberOfRooms; i++)
+                {
+                    booking.Rooms.Add(new Room() { TheCategory = new Category() { Id = room.CategoryId } });
+                }
+            }
+            //If there are no categories/rooms, send back to Rooms
+            if (booking.Rooms.Count() == 0)
+                return RedirectToAction("Rooms");
+
+            booking.UserId = User.Identity.GetUserId();
+            int bookingId = bookingRepository.SaveBooking(booking);
+            if (bookingId!=0)
+            {
+                makeBooking.Id=bookingId;
+                SaveMakeBookingSession(makeBooking);
+                return RedirectToAction("Completed");
+            }
+            else
+                return View(makeBooking);
+        }
+
+        public ActionResult Completed()
+        {
+            
+            MakeBooking booking = GetMakeBookingSession();
+            //If someone tries to go to Completed-action without passing Confirm 
+            if (booking.Id == 0) return RedirectToAction("Index","Home");
+            SaveMakeBookingSession(null);
+            return View(booking);
+        }
+
+        private MakeBooking GetMakeBookingSession()
+        {
+            MakeBooking makeBookingModel = (MakeBooking)Session["booking"];
+            if(makeBookingModel == null)
+            {
+                makeBookingModel = new MakeBooking();
+                makeBookingModel.RoomCategories = new List<Models.RoomCategory>();
+            }
+            IList<Category> categories = categoryRepository.Categories.ToList();
+            if (categories.Count() != makeBookingModel.RoomCategories.Count())
+            {
+                foreach (Category category in categories)
+                {
+                    Models.RoomCategory roomCategory = new Models.RoomCategory() { CategoryId = category.Id, Name = category.Name, Description = category.Description, NumberOfRooms = 0 };
+                    makeBookingModel.RoomCategories.Add(roomCategory);
+                }
+            }
+
+            return makeBookingModel;
+        }
+        private void SaveMakeBookingSession(MakeBooking booking)
+        {
+            Session["booking"] = booking;
+        }
+    }
+}

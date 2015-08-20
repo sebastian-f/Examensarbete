@@ -1,0 +1,38 @@
+﻿@model Examensarbete.Models.MakeBooking
+
+<style>
+    td{
+          padding:5px;
+    }
+</style>
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Välj datum</h2>
+<br />
+
+@using (Html.BeginForm())
+{
+    <table>
+        <tr>
+            <td>@Html.Label("Incheckning")</td>
+            <td>@Html.Label("Utcheckning")</td>
+        </tr>
+        <tr>
+            <td>
+                @Html.TextBoxFor(m => m.CheckInDate, "{0:yyyy-MM-dd}")
+            </td>
+            <td>
+                @Html.TextBoxFor(m => m.CheckOutDate, "{0:yyyy-MM-dd}")
+            </td>
+        </tr>
+        <tr>
+            <td> </td>
+            <td style="text-align:right">
+                <input type="submit" class="btn btn-info" value="Nästa" />
+            </td>
+        </tr>
+    </table>
+    
+}

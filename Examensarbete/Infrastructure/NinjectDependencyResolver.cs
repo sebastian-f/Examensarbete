@@ -27,7 +27,8 @@ namespace Examensarbete.Infrastructure
         }
         private void AddBindings()
         {            // put bindings here
-            kernel.Bind<ICategoryRepository>().To<CategoryRepository>(); 
+            kernel.Bind<ICategoryRepository>().To<CategoryRepository>();
+            kernel.Bind<IBookingRepository>().To<BookingRepository>();
         }
     }
 }

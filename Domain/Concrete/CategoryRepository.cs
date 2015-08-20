@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Domain.Concrete
 {
@@ -15,6 +16,7 @@ namespace Domain.Concrete
         {
             get
             {
+                IEnumerable<Category> categories = context.Categories.Include(p => p.PricePerDay);
                 return context.Categories;
             }
         }
@@ -68,6 +70,23 @@ namespace Domain.Concrete
             }
             context.Rooms.Add(room);
             context.SaveChanges();
+        }
+
+
+        public double GetPriceForDates(int categoryId, DateTime checkInDate, DateTime checkOutDate)
+        {
+            double price = 0;
+
+            if(checkInDate<checkOutDate)
+            {
+                Category category = context.Categories.Find(categoryId);
+                context.Entry(category).Collection(p => p.PricePerDay).Load();
+                price = category.PricePerDay.Where(p => p.CheckinDate >= checkInDate && p.CheckinDate < checkOutDate).Sum(s => s.Price);
+            }
+            else{
+                throw new Exception();
+            }
+            return price;
         }
     }
 }

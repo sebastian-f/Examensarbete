@@ -17,5 +17,8 @@ namespace Domain.Concrete
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
+
+   
     }
 }
