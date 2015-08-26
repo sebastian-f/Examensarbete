@@ -39,8 +39,8 @@ namespace Domain.Concrete
                 return false;
                         
         }
-        //TODO:Refactoring?
-
+        
+        //Returns the new id if success, and "0" if not
         public int SaveBooking(Booking booking)
         {
             Booking bookingToSave = new Booking() { Rooms=new List<Room>()};
@@ -100,6 +100,15 @@ namespace Domain.Concrete
         public IEnumerable<Booking> GetAllBookingsForUser(string userId)
         {
             return context.Bookings.Where(b => b.UserId == userId);
+        }
+
+
+
+        public Booking GetBooking(int bookingId)
+        {
+            Booking booking = context.Bookings.Include(b=>b.Rooms.Select(r=>r.TheCategory)).Where(b => b.Id == bookingId).FirstOrDefault();
+            
+            return booking;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace Examensarbete.Controllers
 {
     //Make a reservation. 3 steps, choose date(checkin, checkout), select category(rooms), and confirm. 
     //Guest have to be member/logged in to confirm.
+    [Authorize(Roles="Guest")]
     public class BookingController : Controller
     {
         ICategoryRepository categoryRepository;
@@ -21,8 +22,38 @@ namespace Examensarbete.Controllers
             this.categoryRepository = categoryRepository;
             this.bookingRepository = bookingRepository;
         }
+        //TODO: Finish
+        //Show all bookings for logged in user
+        public ActionResult MyBookings()
+        {
+            IList<Booking> bookingEntities = bookingRepository.GetAllBookingsForUser(User.Identity.GetUserId()).ToList();
+            IList<BookingModel> bookings = new List<BookingModel>();
+            foreach(Booking bookingEntity in bookingEntities)
+            {
+                bookings.Add(new BookingModel() { CheckInDate = bookingEntity.CheckInDate, CheckOutDate = bookingEntity.CheckOutDate, Id = bookingEntity.Id });
+            }
+            return View(bookings);
+        }
+        //Show specific booking for logged in user
+        public ActionResult MyBooking(int id)
+        {
+            Booking bookingEntity = bookingRepository.GetBooking(id);
+            if (bookingEntity == null) return RedirectToAction("MyBookings");
+            if (bookingEntity.UserId != User.Identity.GetUserId()) return RedirectToAction("MyBookings");
+            BookingModel booking = new BookingModel() {CheckInDate=bookingEntity.CheckInDate,CheckOutDate=bookingEntity.CheckOutDate,Id=bookingEntity.Id };
+            booking.RoomCategories = new List<RoomCategory>();
+            foreach(Room room in bookingEntity.Rooms)
+            {
+                RoomCategory rc = booking.RoomCategories.Where(r => r.CategoryId == room.TheCategory.Id).FirstOrDefault();
+                if (rc == null) booking.RoomCategories.Add(new RoomCategory() { CategoryId=room.TheCategory.Id, Description=room.TheCategory.Description, Name=room.TheCategory.Name, NumberOfRooms=0});
+                booking.RoomCategories.Where(cat => cat.CategoryId == room.TheCategory.Id).First().NumberOfRooms++;
+            }
+
+            return View(booking);
+        }
 
         // GET: Booking
+        [AllowAnonymous]
         public ActionResult Index()
         {
             MakeBooking booking = GetMakeBookingSession();
@@ -31,6 +62,7 @@ namespace Examensarbete.Controllers
             return View(booking);
         }
         //Post checkin and checkout date
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Index(MakeBooking booking)
         {
@@ -48,6 +80,7 @@ namespace Examensarbete.Controllers
         }
 
         //Choose number of rooms in each category
+        [AllowAnonymous]
         public ActionResult Rooms()
         {
             MakeBooking booking = GetMakeBookingSession();
@@ -73,6 +106,7 @@ namespace Examensarbete.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public ActionResult Rooms(MakeBooking makeBooking)
         {
             MakeBooking booking = GetMakeBookingSession();
@@ -105,6 +139,7 @@ namespace Examensarbete.Controllers
             return RedirectToAction("Confirm");
         }
          [HttpGet]
+        [AllowAnonymous]
         public ActionResult Confirm()
         {
             MakeBooking bookingSession = GetMakeBookingSession();

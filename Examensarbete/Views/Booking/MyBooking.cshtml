@@ -1,0 +1,19 @@
+﻿@using Examensarbete.Models
+@model BookingModel
+
+@{
+    ViewBag.Title = "Mina bokningar";
+}
+
+<h2>Mina bokningar</h2>
+
+<br /><br />
+
+<div class="panel panel-default">
+    <div class="panel-heading"><b>Bokningsnummer: @Model.Id </b></div>
+    <div class="panel-body">
+       Incheckning: @Model.CheckInDate.ToShortDateString() <br />
+       Utcheckning: @Model.CheckOutDate.ToShortDateString() <br />
+       Pris: <br />
+    </div>
+</div>

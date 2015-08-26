@@ -1,0 +1,29 @@
+﻿@using Examensarbete.Models
+@model IList<BookingModel>
+@{
+    ViewBag.Title = "Mina bokningar";
+}
+
+<h2>Mina bokningar</h2>
+<br /><br />
+<table class="table table-hover">
+    <thead><tr><th>Bokningsnummer</th><th>Incheckning</th><th>Utcheckning</th></tr></thead>
+    @foreach (BookingModel booking in Model)
+    {
+        <text>
+    <tr>
+        <td>
+            @Html.ActionLink(booking.Id.ToString(),"MyBooking",new {id=booking.Id })
+        </td>
+        <td>
+            @booking.CheckInDate.ToShortDateString()
+        </td>
+        <td>
+            @booking.CheckOutDate.ToShortDateString()
+        </td>
+    </tr>
+        </text>
+    }
+
+
+</table>

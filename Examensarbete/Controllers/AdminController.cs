@@ -9,6 +9,7 @@ using Examensarbete.Models;
 
 namespace Examensarbete.Controllers
 {
+    [Authorize(Roles="Administrator")]
     public class AdminController : Controller
     {
         private ICategoryRepository categoryRepository;        

@@ -31,7 +31,7 @@ Checkut:
         @Html.HiddenFor(m=>m.RoomCategories[i].CategoryId)
         @Html.Label(Model.RoomCategories[i].Name) 
             </td><td>
-        @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
+        @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
             </td>
             <td>
                 @Html.Label(Model.RoomCategories[i].PriceForChoosenDates.ToString()) kr

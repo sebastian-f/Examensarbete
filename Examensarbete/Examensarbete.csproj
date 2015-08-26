@@ -183,6 +183,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\AddPriceViewModel.cs" />
     <Compile Include="Models\AddRoomViewModel.cs" />
+    <Compile Include="Models\BookingModel.cs" />
     <Compile Include="Models\CategoryViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\MakeBooking.cs" />
@@ -252,6 +253,8 @@
     <Content Include="Views\Booking\Rooms.cshtml" />
     <Content Include="Views\Booking\Confirm.cshtml" />
     <Content Include="Views\Booking\Completed.cshtml" />
+    <Content Include="Views\Booking\MyBookings.cshtml" />
+    <Content Include="Views\Booking\MyBooking.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

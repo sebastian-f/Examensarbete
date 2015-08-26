@@ -12,5 +12,6 @@ namespace Domain.Abstract
         bool CheckAvailableRooms(int categoryId,int numberOfRooms,DateTime checkinDate,DateTime checkOutDate);
         int SaveBooking(Booking booking);
         IEnumerable<Booking> GetAllBookingsForUser(string userId);
+        Booking GetBooking(int bookingId);
     }
 }
