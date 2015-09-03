@@ -67,6 +67,8 @@
 <br />
 
 @Html.ActionLink("Lägg till priser", "AddPriceToCategory", new { id = Model.Id }, new { @class = "btn btn-info" })
+<br />
+<img src="@Url.Action("GetImage", "Admin", new { categoryId=Model.Id})" />
 
 <script type="text/javascript">
     function showCalendar(m, y) {

@@ -15,5 +15,7 @@ namespace Domain.Abstract
         void AddOrUpdateDaypriceForCategory(int categoryId,double price,DateTime date);
         void AddRoom(Room room, int categoryId);
         double GetPriceForDates(int categoryId, DateTime checkInDate, DateTime checkOutDate);
+        IEnumerable<Room> GetAllRooms();
+        void UpdateRoom(Room room);
     }
 }

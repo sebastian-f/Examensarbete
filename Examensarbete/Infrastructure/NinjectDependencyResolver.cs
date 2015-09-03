@@ -1,6 +1,8 @@
 ﻿using Domain.Abstract;
 using Domain.Concrete;
 using Ninject;
+using Service.Implementation;
+using Service.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,7 @@ namespace Examensarbete.Infrastructure
         {            // put bindings here
             kernel.Bind<ICategoryRepository>().To<CategoryRepository>();
             kernel.Bind<IBookingRepository>().To<BookingRepository>();
+            kernel.Bind<IBookingService>().To<BookingService>();
         }
     }
 }

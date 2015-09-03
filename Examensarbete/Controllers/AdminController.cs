@@ -40,10 +40,24 @@ namespace Examensarbete.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddCategory(Category category)
+        public ActionResult AddCategory(Category category, HttpPostedFileBase image)
         {
+            if (image != null)
+            {
+                category.ImageMimeType = image.ContentType;
+                category.ImageData = new byte[image.ContentLength];
+                image.InputStream.Read(category.ImageData, 0, image.ContentLength);
+            }
             Category c = categoryRepository.Add(category);
+            
             return RedirectToAction("Category", new { id=c.Id });
+        }
+
+        public FileContentResult GetImage(int categoryId) 
+        {
+            Category category = categoryRepository.Categories.FirstOrDefault(p => p.Id == categoryId);
+            if (category != null) { return File(category.ImageData, category.ImageMimeType); }
+            else { return null; }
         }
 
         [HttpGet]
@@ -77,6 +91,26 @@ namespace Examensarbete.Controllers
 
             return RedirectToAction("Categories");
         }
+        public ActionResult Room()
+        {
+            IEnumerable<Room> rooms = categoryRepository.GetAllRooms();
+            IEnumerable<SelectListItem> categories = categoryRepository.Categories.Select(c=>
+                                                       new SelectListItem() {
+                                                           Text = c.Name, 
+                                                           Value = c.Id.ToString() 
+                                                       }
+                                                    ).ToList();
+            ViewModels.RoomViewModel viewModel = new ViewModels.RoomViewModel() { Rooms=rooms,Categories=categories};
+            return View(viewModel);
+        }
+        [HttpPost]
+        public ActionResult UpdateRoom(Room roomModel, int categoryId)
+        {
+            roomModel.TheCategory = new Category(){Id=categoryId};
+            categoryRepository.UpdateRoom(roomModel);
+            return RedirectToAction("Room");
+        }
+
         [HttpGet]
         public ActionResult AddRoom()
         {
@@ -95,7 +129,8 @@ namespace Examensarbete.Controllers
         {
             Room room = new Room() { RoomNumber = addRoomModel.RoomNumber };
             categoryRepository.AddRoom(room, categoryId);
-            return RedirectToAction("Index");
+            return RedirectToAction("Room");
         }
     }
 }
+

@@ -88,5 +88,20 @@ namespace Domain.Concrete
             }
             return price;
         }
+
+
+        public IEnumerable<Room> GetAllRooms()
+        {
+            return context.Rooms.Include(c=>c.TheCategory);
+        }
+
+
+        public void UpdateRoom(Room room)
+        {
+            Room roomEntity = context.Rooms.Where(r => r.Id == room.Id).FirstOrDefault();
+            roomEntity.RoomNumber = room.RoomNumber;
+            roomEntity.TheCategory = context.Categories.Where(c => c.Id == room.TheCategory.Id).FirstOrDefault();
+            context.SaveChanges();
+        }
     }
 }

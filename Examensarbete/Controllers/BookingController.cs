@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
+using Service.Interface;
 
 namespace Examensarbete.Controllers
 {
@@ -17,21 +18,24 @@ namespace Examensarbete.Controllers
     {
         ICategoryRepository categoryRepository;
         IBookingRepository bookingRepository;
-        public BookingController(ICategoryRepository categoryRepository,IBookingRepository bookingRepository)
+        IBookingService bookingService;
+        public BookingController(ICategoryRepository categoryRepository,IBookingRepository bookingRepository,IBookingService bookingService)
         {
             this.categoryRepository = categoryRepository;
             this.bookingRepository = bookingRepository;
+            this.bookingService = bookingService;
         }
         //TODO: Finish
         //Show all bookings for logged in user
         public ActionResult MyBookings()
         {
             IList<Booking> bookingEntities = bookingRepository.GetAllBookingsForUser(User.Identity.GetUserId()).ToList();
-            IList<BookingModel> bookings = new List<BookingModel>();
-            foreach(Booking bookingEntity in bookingEntities)
-            {
-                bookings.Add(new BookingModel() { CheckInDate = bookingEntity.CheckInDate, CheckOutDate = bookingEntity.CheckOutDate, Id = bookingEntity.Id });
-            }
+            IList<BookingModel> bookings = bookingEntities.Select(b => new BookingModel
+                                             {
+                                                 CheckInDate =  b.CheckInDate,
+                                                 CheckOutDate = b.CheckOutDate,
+                                                 Id = b.Id
+                                              }).ToList();
             return View(bookings);
         }
         //Show specific booking for logged in user
@@ -224,6 +228,20 @@ namespace Examensarbete.Controllers
 
             return makeBookingModel;
         }
+        [AllowAnonymous]
+        public FileContentResult GetImage(int categoryId)
+        {
+            Category category = categoryRepository.Categories.FirstOrDefault(p => p.Id == categoryId);
+            if (category != null) 
+            {
+                if (category.ImageData == null || category.ImageMimeType == null) 
+                    return null;
+                else
+                    return File(category.ImageData, category.ImageMimeType); 
+            }
+            else { return null; }
+        }
+        
         private void SaveMakeBookingSession(MakeBooking booking)
         {
             Session["booking"] = booking;
