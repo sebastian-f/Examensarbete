@@ -99,6 +99,7 @@ namespace Examensarbete.Controllers
                 {
                     price = categoryRepository.GetPriceForDates(category.CategoryId, booking.CheckInDate, booking.CheckOutDate);
                     booking.RoomCategories.Where(c => c.CategoryId == category.CategoryId).First().PriceForChoosenDates = price;
+                    if (category.Images == null) booking.RoomCategories.Where(cat => cat.CategoryId == category.CategoryId).First().Images = new List<Models.Image>();
                 }
             }
 
@@ -106,6 +107,7 @@ namespace Examensarbete.Controllers
             {
                 if (TempData["isAvailable"].ToString() == "false") ViewBag.ErrorMessage = "Det finns inte tillräckligt med lediga rum under perioden du valt. Prova ett annat datum eller typ av rum.";
             }
+
             return View(booking);
         }
 
@@ -222,6 +224,11 @@ namespace Examensarbete.Controllers
                 foreach (Category category in categories)
                 {
                     Models.RoomCategory roomCategory = new Models.RoomCategory() { CategoryId = category.Id, Name = category.Name, Description = category.Description, NumberOfRooms = 0 };
+                    roomCategory.Images = new List<Models.Image>();
+                    foreach(Domain.Entities.Image img in category.Images)
+                    {
+                        roomCategory.Images.Add(new Models.Image() { Id = img.Id, ImageData = img.ImageData, ImageMimeType = img.ImageMimeType, Info = img.Info });
+                    }
                     makeBookingModel.RoomCategories.Add(roomCategory);
                 }
             }
@@ -229,17 +236,15 @@ namespace Examensarbete.Controllers
             return makeBookingModel;
         }
         [AllowAnonymous]
-        public FileContentResult GetImage(int categoryId)
+        public FileContentResult GetImage(int categoryId,int imageId)
         {
-            Category category = categoryRepository.Categories.FirstOrDefault(p => p.Id == categoryId);
-            if (category != null) 
+            Category category = categoryRepository.Get(categoryId);
+            if (category != null)
             {
-                if (category.ImageData == null || category.ImageMimeType == null) 
-                    return null;
-                else
-                    return File(category.ImageData, category.ImageMimeType); 
+                if (category.Images != null)
+                    return File(category.Images.Where(i => i.Id == imageId).First().ImageData, category.Images.Where(im => im.Id == imageId).First().ImageMimeType);
             }
-            else { return null; }
+            return null;
         }
         
         private void SaveMakeBookingSession(MakeBooking booking)

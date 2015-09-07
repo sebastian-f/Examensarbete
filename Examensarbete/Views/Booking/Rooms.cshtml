@@ -8,6 +8,12 @@
     th,td{
         padding:7px;
     }
+    img {
+        cursor:pointer;
+     box-shadow: 0px 0px 5px #888888;
+      max-width: 100%; 
+      height: auto;
+    }
 </style>
 
 <h2>Välj rum</h2>
@@ -20,6 +26,10 @@ Checkut:
 @Model.CheckOutDate.ToShortDateString()
 
 <br /><br />
+<span style="color:darkred">
+    @ViewBag.ErrorMessage
+</span>
+<br />
 
 <table>
     <tr><th><h4>Typ</h4></th><th><h4>Antal</h4></th><th><h4>Pris per rum<br />och vistelse</h4></th><th style="text-align:right">Totalt</th></tr>
@@ -29,7 +39,9 @@ Checkut:
     { 
         <tr><td>
         @Html.HiddenFor(m=>m.RoomCategories[i].CategoryId)
-        <button type="button" class="btn btn-primary btn-xs" onclick="categoryInfo(@Model.RoomCategories[i].CategoryId)" data-toggle="modal" data-target="#myModal">@Model.RoomCategories[i].Name</button>
+        @Model.RoomCategories[i].Name
+            <br />
+            <a href="#" data-toggle="modal" data-target="#myModal@(@Model.RoomCategories[i].CategoryId)"><i>Mer info</i></a>
 
             </td><td>
         @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
@@ -43,67 +55,82 @@ Checkut:
         </tr>
     }
     <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">0</span> kr</td></tr>
-    <tr><td></td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
+    <tr><td>@Html.ActionLink("Tillbaka", "Index", null, new { @class = "btn btn-info", style = "float:left" })</td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
 }
 
     </table>
 <br />
-<span style="color:darkred">
-    @ViewBag.ErrorMessage
-</span>
-<br /><br />
-@Html.ActionLink("Tillbaka","Index")
 
 
-
-<div id="myModal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
+@foreach (RoomCategory category in Model.RoomCategories)
+{
+    <div id="myModal@(category.CategoryId)" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title" id="modalTitle">@Model.RoomCategories.FirstOrDefault().Name</h4>
+                    <h4 class="modal-title">@category.Name</h4>
                 </div>
-                <div class="modal-body" id="modalContent">
+                <div class="modal-body">
+                    @category.Description
+                    <br /><br />
+                    <div id="divImagesCatid@(category.CategoryId)">
+                    @foreach (Examensarbete.Models.Image image in category.Images)
+                    {
+                        <img style="display: none " onclick="nextImg(@(category.CategoryId),this)" id="imgid@(image.Id)" class="img-rounded"  src="@Url.Action("GetImage", "Booking", new { categoryId=category.CategoryId,imageId=image.Id})" />
+                    }
 
-                    
-
+                    </div>
 
                 </div>
+
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" style="float:left" data-dismiss="modal">Avbryt</button>
-                    <input value="Spara" type="submit" class="btn btn-primary">
+                   
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Tillbaka</button>
 
                 </div>
             </div>
-        
+
+        </div>
     </div>
-</div>
+}
 
 
 
 <script>
-    var categories = [];
-    var imgs = [];
-    @foreach(RoomCategory category in Model.RoomCategories)
+    function nextImg(catId,theimage)
     {
-        <text>
-            imgs = [];
-            imgs[0] = new Image();
-            imgs[0].src = "@Url.Action("GetImage", "Booking", new { categoryId=category.CategoryId})";
-            categories.push({ id: "@category.CategoryId", name: "@category.Name", allImgs: imgs });
-    </text>
+        var test;
+        var imgDiv = document.getElementById("divImagesCatid"+catId);
+        var images = imgDiv.getElementsByTagName('img');
+        for(var i=0;i<images.length;i++)
+        {
+            if (images[i].id == theimage.id) {
+                images[i].style.display = "none";
+                if (i + 1 < images.length){
+                    images[i + 1].style.display = "inline";
+                }
+                else {
+                    images[0].style.display = "inline";
+                }
+            }
+            
+        }
+        
     }
 
-    function categoryInfo(categoryId) {
-        var category = findCategoryById(categoryId);
-        document.getElementById("modalTitle").innerHTML = category.name;
-        document.getElementById("modalContent").innerHTML = "<img src='" + category.allImgs[0].src + "'>"
-    }
-
-    function findCategoryById(theId) {
-        for (var i = 0; i < categories.length; i++) {
-            if (categories[i].id == theId) return categories[i];
+    function showFirstImgInEachCategory()
+    {
+        @foreach(RoomCategory category in Model.RoomCategories)
+        {
+            if(category.Images.Count!=0) 
+            {
+                <text>
+                    document.getElementById("imgid@(category.Images[0].Id)").style.display = "inline";
+                </text>
+                
+            }
         }
     }
 
@@ -133,10 +160,12 @@ Checkut:
 
 
     function inputChange() {
+        showFirstImgInEachCategory();
         countSum();
         $('input').on('input', function () {
             countSum();
         });
+
     }
     window.onload = inputChange;
 

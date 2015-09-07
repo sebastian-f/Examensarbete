@@ -22,8 +22,7 @@ namespace Examensarbete.Models
         public string Description { get; set; }
         public double PriceForChoosenDates { get; set; }
         public int NumberOfRooms { get; set; }
-        public byte[] ImageData { get; set; }        
-        public string ImageMimeType { get; set; }
+        public IList<Image> Images { get; set; }
     }
 
 }

@@ -12,8 +12,7 @@ namespace Domain.Entities
         public string Name { get; set; }
         public string Description { get; set; }
         public virtual ICollection<DatePrice> PricePerDay { get; set; }
-        public byte[] ImageData { get; set; }
-        public string ImageMimeType { get; set; }
+        public virtual ICollection<Image> Images { get; set; }
 
     }
 }

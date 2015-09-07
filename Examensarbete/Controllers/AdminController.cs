@@ -40,24 +40,35 @@ namespace Examensarbete.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddCategory(Category category, HttpPostedFileBase image)
+        public ActionResult AddCategory(Category category, IEnumerable<HttpPostedFileBase> images)
         {
-            if (image != null)
+            Domain.Entities.Image imageToSave = new Domain.Entities.Image();
+            category.Images = new List<Domain.Entities.Image>();
+            if (images != null)
             {
-                category.ImageMimeType = image.ContentType;
-                category.ImageData = new byte[image.ContentLength];
-                image.InputStream.Read(category.ImageData, 0, image.ContentLength);
+                foreach (HttpPostedFileBase image in images)
+                {
+                    imageToSave = new Domain.Entities.Image();
+                    imageToSave.ImageData = new byte[image.ContentLength];
+                    imageToSave.ImageMimeType = image.ContentType;
+                    image.InputStream.Read(imageToSave.ImageData, 0, image.ContentLength);
+                    category.Images.Add(imageToSave);
+                }
             }
-            Category c = categoryRepository.Add(category);
             
-            return RedirectToAction("Category", new { id=c.Id });
+            Category c = categoryRepository.Add(category);
+
+            return RedirectToAction("Category", new { id = c.Id });
         }
 
-        public FileContentResult GetImage(int categoryId) 
+        public FileContentResult GetImage(int imageId,int categoryId) 
         {
-            Category category = categoryRepository.Categories.FirstOrDefault(p => p.Id == categoryId);
-            if (category != null) { return File(category.ImageData, category.ImageMimeType); }
-            else { return null; }
+            Category category = categoryRepository.Get(categoryId);
+            if (category != null) { 
+                if(category.Images!= null)
+                    return File(category.Images.Where(i=>i.Id==imageId).First().ImageData, category.Images.Where(im=>im.Id==imageId).First().ImageMimeType); 
+            }
+            return null;
         }
 
         [HttpGet]

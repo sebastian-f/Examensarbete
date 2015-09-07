@@ -16,8 +16,8 @@ namespace Domain.Concrete
         {
             get
             {
-                IEnumerable<Category> categories = context.Categories.Include(p => p.PricePerDay);
-                return context.Categories;
+                IEnumerable<Category> categories = context.Categories.Include(p =>  p.PricePerDay).Include(i=>i.Images);
+                return context.Categories.Include(i=>i.Images);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Domain.Concrete
 
         public Category Get(int id)
         {
-            Category category = context.Categories.Find(id);
+            Category category = context.Categories.Include(i=>i.Images).FirstOrDefault(c=>c.Id==id);
             if(category!=null) context.Entry(category).Collection(p => p.PricePerDay).Load(); 
             return category;
             
@@ -102,6 +102,12 @@ namespace Domain.Concrete
             roomEntity.RoomNumber = room.RoomNumber;
             roomEntity.TheCategory = context.Categories.Where(c => c.Id == room.TheCategory.Id).FirstOrDefault();
             context.SaveChanges();
+        }
+
+
+        public Image GetImage(int imageId)
+        {
+            throw new NotImplementedException();
         }
     }
 }
