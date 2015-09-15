@@ -59,20 +59,60 @@
 <h2>@Model.Name</h2>
 <h4>@Model.Description</h4>
 <br />
-
+<button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">Ändra</button>
+<button type="button" class="btn btn-info">Bilder</button>
+@Html.ActionLink("Lägg till priser", "AddPriceToCategory", new { id = Model.Id }, new { @class = "btn btn-info" })
+<br /><br />
 
 <table id="insertJavascript"></table>
 <div id="changePriceDiv"></div>
 
 <br />
-
-@Html.ActionLink("Lägg till priser", "AddPriceToCategory", new { id = Model.Id }, new { @class = "btn btn-info" })
 <br />
 
 @foreach(Domain.Entities.Image image in Model.Images)
 {
     <img src="@Url.Action("GetImage", "Admin", new { categoryId=Model.Id,imageId=image.Id})" />
 }
+
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        @using (Html.BeginForm("UpdateCategory", "Admin"))
+        {
+        <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="modalTitle">@Model.Name</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div>
+                         @Html.HiddenFor(m => m.Id)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Namn")
+                        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Beskrivning")
+                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" style="float:left" data-dismiss="modal">Avbryt</button>
+                    <input value="Spara" type="submit" class="btn btn-primary">
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
 
 <script type="text/javascript">
     function showCalendar(m, y) {

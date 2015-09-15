@@ -22,6 +22,11 @@ namespace Examensarbete.Controllers
             return View();
         }
 
+        public ActionResult Rooms()
+        {
+            return View();
+        }
+
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";

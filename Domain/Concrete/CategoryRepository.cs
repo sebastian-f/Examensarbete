@@ -107,7 +107,17 @@ namespace Domain.Concrete
 
         public Image GetImage(int imageId)
         {
+            //TODO:
             throw new NotImplementedException();
+        }
+
+
+        public void UpdateCategoryNameAndInfo(int id, string name, string info)
+        {
+            Category category = context.Categories.Where(c => c.Id == id).First();
+            category.Name = name;
+            category.Description = info;
+            context.SaveChanges();
         }
     }
 }

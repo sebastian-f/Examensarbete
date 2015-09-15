@@ -17,6 +17,7 @@ namespace Domain.Abstract
         double GetPriceForDates(int categoryId, DateTime checkInDate, DateTime checkOutDate);
         IEnumerable<Room> GetAllRooms();
         void UpdateRoom(Room room);
+        void UpdateCategoryNameAndInfo(int id, string name, string info);
         Image GetImage(int imageId);
     }
 }

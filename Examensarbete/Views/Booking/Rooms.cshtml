@@ -75,11 +75,11 @@ Checkut:
                 <div class="modal-body">
                     @category.Description
                     <br /><br />
-                    <div id="divImagesCatid@(category.CategoryId)">
-                    @foreach (Examensarbete.Models.Image image in category.Images)
-                    {
-                        <img style="display: none " onclick="nextImg(@(category.CategoryId),this)" id="imgid@(image.Id)" class="img-rounded"  src="@Url.Action("GetImage", "Booking", new { categoryId=category.CategoryId,imageId=image.Id})" />
-                    }
+                    <div id="divImagesCatid@(category.CategoryId)" style="text-align:center">
+                        @foreach (Examensarbete.Models.Image image in category.Images)
+                        {
+                            <img style="display: none " onclick="nextImg(@(category.CategoryId),this)" id="imgid@(image.Id)" class="img-rounded" src="@Url.Action("GetImage", "Booking", new { categoryId=category.CategoryId,imageId=image.Id})" />
+                        }
 
                     </div>
 

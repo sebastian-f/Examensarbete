@@ -60,6 +60,11 @@ namespace Examensarbete.Controllers
 
             return RedirectToAction("Category", new { id = c.Id });
         }
+        public ActionResult UpdateCategory(Category category )
+        {
+            categoryRepository.UpdateCategoryNameAndInfo(category.Id, category.Name, category.Description);
+            return RedirectToAction("Category", new{id= category.Id});
+        }
 
         public FileContentResult GetImage(int imageId,int categoryId) 
         {

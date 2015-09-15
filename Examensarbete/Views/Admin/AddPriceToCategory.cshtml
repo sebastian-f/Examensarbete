@@ -9,6 +9,7 @@
 
 @using (Html.BeginForm())
 {
+    <div>
     @Html.HiddenFor(m=>m.CategoryId)
     <br />
     @Html.Label("Pris")
@@ -21,10 +22,10 @@
     @Html.TextBoxFor(m => m.FirstDay, "{0:yyyy-MM-dd}", new { @class="datepicker"}) 
     @Html.TextBoxFor(m => m.LastDay, "{0:yyyy-MM-dd}", new { @class = "datepicker" })
     <br /><br />
-    <input type="submit" value="Spara" />
-    <br />
-    <br />
-    @Html.ActionLink("Tillbaka", "Category", new { id = Model.CategoryId }, new {@class="btn btn-info" })
+    @Html.ActionLink("Tillbaka", "Category", new { id = Model.CategoryId }, new { @class = "btn btn-info", style = "float:left" })
+    <input type="submit" value="Spara" style="margin-left:40px"  />
+
+    </div>
 }
 
 
