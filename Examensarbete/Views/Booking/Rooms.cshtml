@@ -30,36 +30,48 @@ Checkut:
     @ViewBag.ErrorMessage
 </span>
 <br />
+@if(Model.RoomCategories.Count > 0)
+{ 
+    <table>
+        <tr><th><h4>Typ</h4></th><th><h4>Antal</h4></th><th><h4>Pris per rum<br />och vistelse</h4></th><th style="text-align:right">Totalt</th></tr>
+    @using(Html.BeginForm())
+    {
+        for (int i = 0; i < Model.RoomCategories.Count;i++ )
+        { 
+            <tr><td>
+            @Html.HiddenFor(m=>m.RoomCategories[i].CategoryId)
+            @Model.RoomCategories[i].Name
+                <br />
+                <a href="#" data-toggle="modal" data-target="#myModal@(@Model.RoomCategories[i].CategoryId)"><i>Mer info</i></a>
 
-<table>
-    <tr><th><h4>Typ</h4></th><th><h4>Antal</h4></th><th><h4>Pris per rum<br />och vistelse</h4></th><th style="text-align:right">Totalt</th></tr>
-@using(Html.BeginForm())
-{
-    for (int i = 0; i < Model.RoomCategories.Count;i++ )
-    { 
-        <tr><td>
-        @Html.HiddenFor(m=>m.RoomCategories[i].CategoryId)
-        @Model.RoomCategories[i].Name
-            <br />
-            <a href="#" data-toggle="modal" data-target="#myModal@(@Model.RoomCategories[i].CategoryId)"><i>Mer info</i></a>
-
-            </td><td>
-        @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
-            </td>
-            <td>
-                @Html.Label(Model.RoomCategories[i].PriceForChoosenDates.ToString()) kr
-            </td>
-            <td style="text-align:right">
-                <span id="sumCat@(Model.RoomCategories[i].CategoryId)">0</span> kr
-            </td>
-        </tr>
+                </td><td>
+            @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
+                </td>
+                <td>
+                    @Html.Label(Model.RoomCategories[i].PriceForChoosenDates.ToString()) kr
+                </td>
+                <td style="text-align:right">
+                    <span id="sumCat@(Model.RoomCategories[i].CategoryId)">0</span> kr
+                </td>
+            </tr>
+        }
+        <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">0</span> kr</td></tr>
+        <tr><td>@Html.ActionLink("Tillbaka", "Index", null, new { @class = "btn btn-info", style = "float:left" })</td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
     }
-    <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">0</span> kr</td></tr>
-    <tr><td>@Html.ActionLink("Tillbaka", "Index", null, new { @class = "btn btn-info", style = "float:left" })</td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
-}
 
-    </table>
-<br />
+        </table>
+}else{
+    <text>
+        Det finns inga rum under vald period.<br />
+        Klicka på Tillbaka och välj ett annat datum
+        <br /><br />
+        @Html.ActionLink("Tillbaka", "Index", null, new { @class = "btn btn-info", style = "float:left" })
+        <br />
+    </text>
+}
+    
+
+
 
 
 @foreach (RoomCategory category in Model.RoomCategories)

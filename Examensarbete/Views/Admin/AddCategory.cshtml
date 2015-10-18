@@ -18,7 +18,8 @@
         @Html.Label("Beskrivning")
         @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
     </div>
-    <div>                    
+    <div>    
+        @Html.Label("Bilder")                
         <input type="file" name="images" id="images" class="btn-default" multiple>
     </div>
     <br />

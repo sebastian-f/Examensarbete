@@ -6,6 +6,8 @@ using System.Web.Mvc;
 using Domain.Abstract;
 using Domain.Entities;
 using Examensarbete.Models;
+using Examensarbete.ViewModels;
+using System.IO;
 
 namespace Examensarbete.Controllers
 {
@@ -48,6 +50,9 @@ namespace Examensarbete.Controllers
             {
                 foreach (HttpPostedFileBase image in images)
                 {
+                    //TODO: Felmeddelande om filen inte är en bild
+                    if (IsImage(image) == false) return RedirectToAction("AddCategory");
+
                     imageToSave = new Domain.Entities.Image();
                     imageToSave.ImageData = new byte[image.ContentLength];
                     imageToSave.ImageMimeType = image.ContentType;
@@ -75,6 +80,16 @@ namespace Examensarbete.Controllers
             }
             return null;
         }
+
+        //public FileContentResult GetImage(int imageId)
+        //{
+        //    Domain.Entities.Image imageEntity = categoryRepository.GetImage(imageId);
+
+        //    if (imageEntity != null)
+        //        return File(imageEntity.ImageData, imageEntity.ImageMimeType);
+        //    else
+        //        return null;
+        //}
 
         [HttpGet]
         public ActionResult AddPriceToCategory(int id,string date=null)
@@ -147,6 +162,80 @@ namespace Examensarbete.Controllers
             categoryRepository.AddRoom(room, categoryId);
             return RedirectToAction("Room");
         }
+
+        //Handle images in a category
+        //No point of loading ImageMimeType and ImageData
+        public ActionResult Images(int id)
+        {
+            HandleImagesViewModel handleImages = new HandleImagesViewModel();
+            handleImages.Images = (from img in categoryRepository.Get(id).Images
+                                  select new Examensarbete.Models.Image() { Id = img.Id, Info = img.Info }).ToList();
+            handleImages.CategoryId = id;
+            ViewBag.catId = id;
+            return View(handleImages);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteImage(int imageId, int categoryId)
+        {
+            categoryRepository.DeleteImage(imageId, categoryId);
+            return RedirectToAction("Images", new { id=categoryId});
+        }
+
+        [HttpPost]
+        public ActionResult UpdateImage(Examensarbete.Models.Image image,int categoryId)
+        {
+            Domain.Entities.Image imageEntity = new Domain.Entities.Image() { Id=image.Id,Info=image.Info};
+            categoryRepository.UpdateImage(imageEntity, categoryId);
+            return RedirectToAction("Images", new { id = categoryId });
+        }
+
+        [HttpPost]
+        public ActionResult AddImage(HttpPostedFileBase imageFile,HandleImagesViewModel handleImg,int categoryId)
+        {
+            //TODO: Felmeddelande om filen inte är en bild
+            if (IsImage(imageFile) == false) return RedirectToAction("Images", new { id = categoryId });
+
+            Domain.Entities.Image imageEntity = new Domain.Entities.Image();
+            imageEntity.Info = handleImg.NewImage.Info;
+            imageEntity.ImageData = new byte[imageFile.ContentLength];
+            imageEntity.ImageMimeType = imageFile.ContentType;
+            imageFile.InputStream.Read(imageEntity.ImageData, 0, imageFile.ContentLength);
+            categoryRepository.AddImageToCategory(imageEntity, categoryId);
+            return RedirectToAction("Images",new {id=categoryId});
+        }
+
+        [NonAction]
+        private bool IsImage(HttpPostedFileBase imageFile)
+        {
+            //-------------------------------------------
+            //  Check the image mime types
+            //-------------------------------------------
+            if (imageFile.ContentType.ToLower() != "image/jpg" &&
+                        imageFile.ContentType.ToLower() != "image/jpeg" &&
+                        imageFile.ContentType.ToLower() != "image/pjpeg" &&
+                        imageFile.ContentType.ToLower() != "image/gif" &&
+                        imageFile.ContentType.ToLower() != "image/x-png" &&
+                        imageFile.ContentType.ToLower() != "image/png")
+            {
+                return false;
+            }
+
+            //-------------------------------------------
+            //  Check the image extension
+            //-------------------------------------------
+            if (Path.GetExtension(imageFile.FileName).ToLower() != ".jpg"
+                && Path.GetExtension(imageFile.FileName).ToLower() != ".png"
+                && Path.GetExtension(imageFile.FileName).ToLower() != ".gif"
+                && Path.GetExtension(imageFile.FileName).ToLower() != ".jpeg")
+            {
+                return false;
+            }
+
+            //If file is an image
+            return true;
+        }
+
     }
 }
 

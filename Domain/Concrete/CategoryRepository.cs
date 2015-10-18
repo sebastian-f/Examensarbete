@@ -119,5 +119,42 @@ namespace Domain.Concrete
             category.Description = info;
             context.SaveChanges();
         }
+
+
+        public void DeleteImage(int imageId,int categoryId)
+        {
+            Category category = context.Categories.Where(c => c.Id == categoryId).First();
+            Image image = category.Images.Where(im => im.Id == imageId).First();
+            category.Images.Remove(image);
+            context.Images.Remove(image);
+            context.SaveChanges();
+        }
+
+        public void UpdateImage(Image image,int categoryId)
+        {
+            Category category = context.Categories.Where(c => c.Id == categoryId).First();
+            category.Images.Where(im => im.Id == image.Id).First().Info = image.Info;
+            context.SaveChanges();
+        }
+
+
+        public void AddImageToCategory(Image image, int categoryId)
+        {
+            Category category = context.Categories.Where(c => c.Id == categoryId).First();
+            category.Images.Add(image);
+            context.SaveChanges();
+        }
+
+
+        public bool HasPriceForAllDays(int categoryId, DateTime checkInDate, DateTime checkOutDate)
+        {
+            Category category = context.Categories.Find(categoryId);
+            context.Entry(category).Collection(p => p.PricePerDay).Load();
+
+            if (category.PricePerDay.Where(d=>d.CheckinDate>=checkInDate && d.CheckinDate<checkOutDate).Count() == (checkOutDate - checkInDate).Days)
+                return true;
+            else
+                return false;
+        }
     }
 }

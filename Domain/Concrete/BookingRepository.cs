@@ -9,38 +9,43 @@ using System.Data.Entity;
 
 namespace Domain.Concrete
 {
+    //TODO: Skriv komentarer här om hur "save(add)" booking fungerar
     public class BookingRepository : IBookingRepository
     {
         private EFDbContext context = new EFDbContext();
 
+        //Check if there are enought available rooms in a category
+        //First check if category has a price on the choosen dates
         public bool CheckAvailableRooms(int categoryId, int numberOfRooms, DateTime checkinDate, DateTime checkOutDate)
         {
-           
-            IQueryable<Booking> bookings = from bks in context.Bookings.Include(b => b.Rooms.Select(c => c.TheCategory))
-                                           where !(bks.CheckInDate >= checkOutDate
-                                           || checkinDate >= bks.CheckOutDate)
-                                           select bks;
+            //Check if all days between checkIn and ckeckOut have a price
+            Category category = context.Categories.Where(c => c.Id == categoryId).Include(p=>p.PricePerDay).First();
+            IList<DatePrice> pricesBetweenDays = category.PricePerDay.Where(pr => pr.CheckinDate >= checkinDate && pr.CheckinDate < checkOutDate).ToList();
+            if (pricesBetweenDays.Count() != (checkOutDate - checkinDate).TotalDays) return false;
             
-            int numberOfRoomsInCategory = (from rms in context.Rooms
-                                          where rms.TheCategory.Id==categoryId
-                                          select rms).Count();
-            int roomsOfSameCategory = 0;
-            foreach (Booking booking in bookings)
+            IList<Room> allRoomsInCategory = (from rm in context.Rooms.Include(bk => bk.Bookings)
+                                                  where rm.TheCategory.Id == categoryId
+                                                  select rm).ToList();
+            int numberOfAvailableRooms = 0;
+            foreach(Room room in allRoomsInCategory)
             {
-                roomsOfSameCategory += (from b in booking.Rooms
-                                        where b.TheCategory.Id == categoryId
-                                        select b).Count();
-                                      
-
+                //Count all bookings in a room, that is on "some of the same days" inside checkin and checkout
+                //If there are zero then the room is available
+                if (room.Bookings.Where(b => !(b.CheckInDate >= checkOutDate || checkinDate >= b.CheckOutDate)).Count() == 0)
+                    numberOfAvailableRooms++;
             }
-            if ((numberOfRoomsInCategory - roomsOfSameCategory) >= numberOfRooms)
+
+            //If there are more available rooms then numberOfRooms
+            if (numberOfAvailableRooms >= numberOfRooms)
                 return true;
             else
                 return false;
-                        
+
+
         }
         
         //Returns the new id if success, and "0" if not
+        //TODO: Refactor?
         public int SaveBooking(Booking booking)
         {
             Booking bookingToSave = new Booking() { Rooms=new List<Room>()};

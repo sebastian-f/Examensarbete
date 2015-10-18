@@ -19,5 +19,9 @@ namespace Domain.Abstract
         void UpdateRoom(Room room);
         void UpdateCategoryNameAndInfo(int id, string name, string info);
         Image GetImage(int imageId);
+        void DeleteImage(int imageId,int categoryId);
+        void UpdateImage(Image image,int categoryId);
+        void AddImageToCategory(Image image, int categoryId);
+        bool HasPriceForAllDays(int categoryId, DateTime checkInDate, DateTime checkOutDate);
     }
 }

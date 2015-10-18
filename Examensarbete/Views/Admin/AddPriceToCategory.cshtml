@@ -1,15 +1,46 @@
 ﻿@model Examensarbete.Models.AddPriceViewModel
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<style>
+    .extraSpace{
+        padding-bottom:10px;
+    }
+</style>
 @{
     ViewBag.Title = "Add price to roomcategory";
     Layout = "AdminLayout.cshtml";
 }
 
-<h2>Add price to category</h2>
+<h2>Lägg till pris</h2>
 
 @using (Html.BeginForm())
 {
-    <div>
+     @Html.HiddenFor(m=>m.CategoryId)
+    <table>
+        <tr>
+            <td  colspan="2">
+                @Html.Label("Pris")
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" class="extraSpace">
+                @Html.TextBoxFor(m => m.Price)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                @Html.Label("Välj första och sista incheckningsdatum")
+            </td>
+        </tr>
+        <tr>
+            <td class="extraSpace">@Html.TextBoxFor(m => m.FirstDay, "{0:yyyy-MM-dd}", new { @class = "datepicker" }) </td>
+            <td class="extraSpace">@Html.TextBoxFor(m => m.LastDay, "{0:yyyy-MM-dd}", new { @class = "datepicker" })</td>
+        </tr>
+        <tr>
+            <td>@Html.ActionLink("Tillbaka", "Category", new { id = Model.CategoryId }, new { @class = "btn btn-info", style = "float:left" })</td>
+            <td><input type="submit" value="Spara" style="float:right" class="btn btn-info" /></td>
+        </tr>
+    </table>
+    @*<div>
     @Html.HiddenFor(m=>m.CategoryId)
     <br />
     @Html.Label("Pris")
@@ -25,7 +56,7 @@
     @Html.ActionLink("Tillbaka", "Category", new { id = Model.CategoryId }, new { @class = "btn btn-info", style = "float:left" })
     <input type="submit" value="Spara" style="margin-left:40px"  />
 
-    </div>
+    </div>*@
 }
 
 

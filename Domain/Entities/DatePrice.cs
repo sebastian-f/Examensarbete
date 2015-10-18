@@ -9,7 +9,10 @@ namespace Domain.Entities
     public class DatePrice
     {
         public int Id { get; set; }
+        //TODO: [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTime CheckinDate { get; set; }
         public double Price { get; set; }
+
+        //public Category _Category { get; set; }
     }
 }

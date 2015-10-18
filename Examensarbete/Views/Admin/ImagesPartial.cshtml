@@ -1,0 +1,38 @@
+﻿@*TODO: Rename this parial to DeleteImagePartial*@
+
+
+@model Examensarbete.Models.Image
+
+
+
+<div id="modalDeleteImg@(Model.Id)" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        @using (Html.BeginForm("DeleteImage", "Admin"))
+            {
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="modalTitle">Ta bort bild</h4>
+                </div>
+                <div class="modal-body">
+                    
+                    <input type="hidden" id="@Model.Id" name="imageId" value="@Model.Id" />
+                    @Html.Hidden("categoryId", (object)ViewBag.catId)
+                    <div>
+                        <img src="@Url.Action("GetImage", "Admin", new { imageId = Model.Id, categoryId = ViewBag.catId })" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" style="float:left" data-dismiss="modal">Avbryt</button>
+                    <input value="Ta bort" type="submit" class="btn btn-primary">
+
+                </div>
+            </div>
+            }
+    </div>
+</div>
+
+

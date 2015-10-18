@@ -13,6 +13,7 @@ namespace Examensarbete.Controllers
 {
     //Make a reservation. 3 steps, choose date(checkin, checkout), select category(rooms), and confirm. 
     //Guest have to be member/logged in to confirm.
+    //TODO:Refactoring, too much code in many actionmethods. Create a bookingService
     [Authorize(Roles="Guest")]
     public class BookingController : Controller
     {
@@ -70,16 +71,14 @@ namespace Examensarbete.Controllers
         [HttpPost]
         public ActionResult Index(MakeBooking booking)
         {
-            MakeBooking bookingSession = GetMakeBookingSession();
-            bookingSession.CheckInDate = booking.CheckInDate;
-            bookingSession.CheckOutDate = booking.CheckOutDate;
-            //Clear "NumberOfRooms" for each category, if user try to change date and then go to Confirm.
-            //Or check this in Confirm and send user back to Rooms or Index
-            for (int i = 0; i < bookingSession.RoomCategories.Count;i++)
-            {
-                bookingSession.RoomCategories[i].NumberOfRooms = 0;
-            }
-                SaveMakeBookingSession(bookingSession);
+            MakeBooking realSession = GetMakeBookingSession();
+            if((realSession.CheckInDate.CompareTo(booking.CheckInDate) == 0) && realSession.CheckOutDate.CompareTo(booking.CheckOutDate) == 0)
+                return RedirectToAction("Rooms");
+
+            MakeBooking newBooking = new MakeBooking(); 
+            newBooking.CheckInDate = booking.CheckInDate;
+            newBooking.CheckOutDate = booking.CheckOutDate;
+            SaveMakeBookingSession(newBooking);
             return RedirectToAction("Rooms");
         }
 
@@ -87,6 +86,7 @@ namespace Examensarbete.Controllers
         [AllowAnonymous]
         public ActionResult Rooms()
         {
+            //TODO: Visa bara rum som har priser
             MakeBooking booking = GetMakeBookingSession();
             if(booking.CheckInDate<DateTime.Now.Date || booking.CheckOutDate<=booking.CheckInDate)
             {
@@ -95,12 +95,19 @@ namespace Examensarbete.Controllers
             else
             {
                 double price;
+                List<RoomCategory> newCategories = new List<RoomCategory>();
+                //Get price, and only display categories with a price for each day
                 foreach (RoomCategory category in booking.RoomCategories)
                 {
-                    price = categoryRepository.GetPriceForDates(category.CategoryId, booking.CheckInDate, booking.CheckOutDate);
-                    booking.RoomCategories.Where(c => c.CategoryId == category.CategoryId).First().PriceForChoosenDates = price;
-                    if (category.Images == null) booking.RoomCategories.Where(cat => cat.CategoryId == category.CategoryId).First().Images = new List<Models.Image>();
+                    if(categoryRepository.HasPriceForAllDays(category.CategoryId,booking.CheckInDate,booking.CheckOutDate)){
+                        price = categoryRepository.GetPriceForDates(category.CategoryId, booking.CheckInDate, booking.CheckOutDate);
+                        booking.RoomCategories.Where(c => c.CategoryId == category.CategoryId).First().PriceForChoosenDates = price;
+                        if (category.Images == null) 
+                            booking.RoomCategories.Where(cat => cat.CategoryId == category.CategoryId).First().Images = new List<Models.Image>();
+                        newCategories.Add(booking.RoomCategories.Where(c => c.CategoryId == category.CategoryId).First());
+                    }
                 }
+                booking.RoomCategories = newCategories;
             }
 
             if (TempData["isAvailable"] != null)
@@ -116,11 +123,11 @@ namespace Examensarbete.Controllers
         public ActionResult Rooms(MakeBooking makeBooking)
         {
             MakeBooking booking = GetMakeBookingSession();
-            if(booking.RoomCategories.Count != makeBooking.RoomCategories.Count) return RedirectToAction("Rooms");
-            foreach(RoomCategory roomCategory in booking.RoomCategories)
+            //if(booking.RoomCategories.Count != makeBooking.RoomCategories.Count) return RedirectToAction("Rooms");
+            foreach(RoomCategory roomCategory in makeBooking.RoomCategories)
             {
-                int nrRooms = makeBooking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms;
-                booking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms = nrRooms;
+                //int nrRooms = makeBooking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms;
+                booking.RoomCategories.Where(r => r.CategoryId == roomCategory.CategoryId).First().NumberOfRooms = roomCategory.NumberOfRooms;
             }
             SaveMakeBookingSession(booking);
 
@@ -212,6 +219,7 @@ namespace Examensarbete.Controllers
 
         private MakeBooking GetMakeBookingSession()
         {
+            //TODO: Try, catch?
             MakeBooking makeBookingModel = (MakeBooking)Session["booking"];
             if(makeBookingModel == null)
             {
@@ -219,7 +227,7 @@ namespace Examensarbete.Controllers
                 makeBookingModel.RoomCategories = new List<Models.RoomCategory>();
             }
             IList<Category> categories = categoryRepository.Categories.ToList();
-            if (categories.Count() != makeBookingModel.RoomCategories.Count())
+            if (makeBookingModel.RoomCategories.Count() == 0)
             {
                 foreach (Category category in categories)
                 {
@@ -229,6 +237,7 @@ namespace Examensarbete.Controllers
                     {
                         roomCategory.Images.Add(new Models.Image() { Id = img.Id, ImageData = img.ImageData, ImageMimeType = img.ImageMimeType, Info = img.Info });
                     }
+                    
                     makeBookingModel.RoomCategories.Add(roomCategory);
                 }
             }
@@ -250,6 +259,17 @@ namespace Examensarbete.Controllers
         private void SaveMakeBookingSession(MakeBooking booking)
         {
             Session["booking"] = booking;
+        }
+
+        //TODO: REMOVE
+        //TESTMETHOD
+        [AllowAnonymous]
+        public string TestHasPrice()
+        { 
+            DateTime checkin = DateTime.Parse("2015-10-12");
+            DateTime checkout = DateTime.Parse("2015-10-12");
+            return categoryRepository.HasPriceForAllDays(1, checkin, checkout).ToString();
+
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿<style>
+﻿<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+<style>
     body {
     padding-top: 0px;
     padding-bottom: 0px;
@@ -12,8 +13,7 @@
     }
 
     .FadeAwayToLeft{
-    /*position: absolute;*/ /*top:0px; right:0px;*/ width:100%; height:100%; margin:0px; 
-    /*margin-left:auto; margin-right:0px;*/
+        width:100%; height:100%; margin:0px; 
 
         background:transparent;
         background: linear-gradient(right, rgba( 255, 255, 255, 255 ) 0%, rgba( 255, 255, 255, 1 ) 100% );
@@ -40,14 +40,14 @@
 </style>
 
 @{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Hotellet";
 }
 
 <div style="padding-top: 50px; height: 400px; background-color: #eee;height:100vh;background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/65/2011-04-27_Kviknes_hotell.jpg');background-size:100% 100%;color:#333">
     <div style="height:300px;border-radius:5px;padding-left:50px; padding-top:10px;" class="gradint-opacity jumbotron">
         <h1>Hotellet</h1>
         <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-
+        <p>@Html.ActionLink("Boka »", "Index", "Booking", null, new { @class = "btn btn-primary btn-lg" })</p>
     </div>
 </div>
     <div class="jumbotron">
@@ -56,34 +56,23 @@
         <p>@Html.ActionLink("Boka »", "Index", "Booking", null, new { @class = "btn btn-primary btn-lg" })</p>
     </div>
 
-    <div class="row" style="margin-left:0px;margin-right:0px">
-        <div class="col-md-4">
-            <h2>Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Våra rum</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Våra rum &raquo;</a></p>
-        </div>
-        <div class="col-md-4">
-            <h2>Om hotellet</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p>@Html.ActionLink("Om hotellet", "Contact", null, new { @class = "btn btn-default" })</p>
-        </div>
-    </div>
-
-<div style="padding-top: 50px; padding-left: 40px; height: 100vh; color: #ebebeb;background-color: #010101;">
+<div id="sectionRooms" style="padding-top: 50px; padding-left: 40px; height: 100vh; color: #ebebeb;background-color: #010101;">
     <h1>Våra rum</h1>
+    <a href="#" class="next-section">Next</a>
 </div>
 
-<div style="padding-top: 50px; padding-left: 40px; height: 400px; background-color: #eee;">
-    <h1>Hitta hit</h1>
+<div id="sectionAbout" style=" background-color: #eee" class="w3-row w3-border">
+    <div style="padding-top:50px; padding-left:40px; height:100%" class="w3-container w3-half">
+        <h1>Hitta hit</h1><br />
+        <p>Hotellet
+        <br />Tralalavägen 12
+        <br />144 43 Hejstad
+        </p>
+        <br />
+    </div>
+    <div class="w3-container w3-half" style="height:100%; overflow:hidden;padding:50px;" >
+        <img src="~/Content/Images/googlePosition.jpg" style="max-height:100%;max-width:100%" />
+    </div>
 </div>
 
 <div style="height: 400px; color: #ebebeb; background-color: #010101;background-image:url('http://blogg.alpresor.se/wp-content/uploads/2013/09/5_2628-St-Anton-Viktor-DSC_0276_1384x790px.jpg'); background-size:50% 100%;background-repeat:no-repeat;background-position:right">
@@ -95,3 +84,56 @@
         </div>
     </div>
 </div>
+
+<div class="row" style="margin-left:0px;margin-right:0px">
+    <div class="col-md-4">
+        <h2>Bokning</h2>
+        <p>
+            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+            enables a clean separation of concerns and gives you full control over markup
+            for enjoyable, agile development.
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Boka &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Våra rum</h2>
+        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Våra rum &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Om hotellet</h2>
+        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+        <p>@Html.ActionLink("Om hotellet", "Contact", null, new { @class = "btn btn-default" })</p>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $('a[href*=#]:not([href=#])').click(function () {
+                debugger;
+                if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+                    var target = $(this.hash);
+                    target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+                    if (target.length) {
+                        $('html,body').animate({
+                            scrollTop: target.offset().top - 50
+                        }, 1000);
+                        return false;
+                    }
+                }
+            });
+        });
+
+        $('.next-section').click(function (e) {
+            e.preventDefault();
+            var $this = $(this),
+                $next = $this.parent().next();
+
+            $('html,body').animate({
+                scrollTop: $next.offset().top - 50
+            }, 1000);
+        });
+
+    </script>
+}

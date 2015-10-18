@@ -8,10 +8,16 @@ namespace Examensarbete.Models
     public class MakeBooking
     {
         public int Id { get; set; }
+        //TODO:Date without time, attribute
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
         public double Price { get; set; }
         public IList<RoomCategory> RoomCategories { get; set; }
+
+        public MakeBooking()
+        {
+            RoomCategories = new List<RoomCategory>();
+        }
     }
 
     
@@ -23,6 +29,12 @@ namespace Examensarbete.Models
         public double PriceForChoosenDates { get; set; }
         public int NumberOfRooms { get; set; }
         public IList<Image> Images { get; set; }
+
+        //public RoomCategory()
+        //{
+        //    NumberOfRooms = 0;
+        //    Images = new List<Image>();
+        //}
     }
 
 }

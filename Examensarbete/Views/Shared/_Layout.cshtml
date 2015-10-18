@@ -21,10 +21,13 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Hem", "Index", "Home")</li>
+                    @*<li>@Html.ActionLink("Hem", "Index", "Home")</li>*@
+                    <li><a href="@Url.Action("Index","Home")#">Hem</a></li>
+                    @*<li>@Html.ActionLink("Våra rum", "Rooms", "Home")</li>*@
+                    <li><a href="@Url.Action("Index","Home")#sectionRooms">Våra rum</a></li>
+                    @*<li>@Html.ActionLink("Om hotellet", "Contact", "Home")</li>*@
+                    <li><a href="@Url.Action("Index","Home")#sectionAbout">Om Hotellet</a></li>
                     <li>@Html.ActionLink("Boka", "Index", "Booking")</li>
-                    <li>@Html.ActionLink("Våra rum", "Rooms", "Home")</li>
-                    <li>@Html.ActionLink("Om hotellet", "Contact", "Home")</li>
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -34,7 +37,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <p>&copy; @DateTime.Now.Year - Hotellet</p>
         </footer>
     </div>
 

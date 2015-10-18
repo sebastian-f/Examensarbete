@@ -16,13 +16,13 @@
 {
     <div class="form-group">
         @Html.Label("Incheckning")
-        @Html.TextBoxFor(m => m.CheckInDate, "{0:yyyy-MM-dd}", new { @class = "datepicker form-control" })
+        @Html.TextBoxFor(m => m.CheckInDate, "{0:yyyy-MM-dd}", new { id="CheckInDate", @class = "datepicker form-control", onchange = "setDate()" })
     </div>
     <div class="form-group">
         @Html.Label("Utcheckning")
-        @Html.TextBoxFor(m => m.CheckOutDate, "{0:yyyy-MM-dd}", new { @class = "datepicker form-control" })
+        @Html.TextBoxFor(m => m.CheckOutDate, "{0:yyyy-MM-dd}", new { id = "CheckOutDate", @class = "datepicker form-control", onchange = "setDate()" })
     </div>
-       <input type="submit" class="btn btn-info" value="Nästa" />
+       <input id="submitButton" type="submit" class="btn btn-info" value="Nästa" />
     
 }
 
@@ -35,6 +35,21 @@
     $(function () {
         $(".datepicker").datepicker({dateFormat: 'yy-mm-dd' });
     });
+
+    //Check if CheckOutDate is AFTER CheckInDate
+    function setDate()
+    {
+        var checkOutDatepicker = $("#CheckOutDate");
+        var checkInDatepicker = $("#CheckInDate");
+        if (checkOutDatepicker.datepicker('getDate') <= checkInDatepicker.datepicker('getDate')) {
+            var theDate = new Date(checkInDatepicker.datepicker('getDate'));
+            theDate.setDate(theDate.getDate() + 1);
+            checkOutDatepicker.datepicker("setDate", theDate);
+            $("#submitButton").focus();
+        }
+        
+        
+    }
 </script>
 
     }
