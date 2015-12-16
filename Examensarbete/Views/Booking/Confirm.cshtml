@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Confirm";
 }
-
+@Html.ActionLink("<-- Tillbaka","Rooms")
 <h2>Slutför bokning</h2>
 
 Från: @Model.CheckInDate.ToShortDateString() <br />
@@ -20,8 +20,9 @@ Till: @Model.CheckOutDate.ToShortDateString() <br />
 
 Pris: @(Model.Price + " kr") <br /><br />
 
-@using(Html.BeginForm())
+
+@using (Html.BeginForm())
 {
-    <input type="submit" value="Boka!" />
-    
+    <input type="submit" value="Boka!" class="btn btn-info" />
+
 }

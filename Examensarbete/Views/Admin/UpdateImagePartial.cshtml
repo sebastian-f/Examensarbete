@@ -1,4 +1,4 @@
-﻿@model Examensarbete.Models.Image
+﻿@model Service.DTO.ImageModel
 
 
 
@@ -18,7 +18,7 @@
                     <input type="hidden" id="@Model.Id" name="Id" value="@Model.Id" />
                     @Html.Hidden("categoryId", (object)ViewBag.catId)
                     <div>
-                        <img src="@Url.Action("GetImage", "Admin", new { imageId = Model.Id, categoryId = ViewBag.catId })" />
+                        <img src="@Url.Action("GetImage", "Admin", new { imageId = Model.Id, categoryId = ViewBag.catId })"  style="width:100%;height:100%;max-width:450px;max-height:350px;" />
                     </div>
                     <div>
                         <br />

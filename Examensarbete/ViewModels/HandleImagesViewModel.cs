@@ -7,9 +7,9 @@ namespace Examensarbete.ViewModels
 {
     public class HandleImagesViewModel
     {
-        public Models.Image NewImage { get; set; }
+        public Service.DTO.ImageModel NewImage { get; set; }
 
-        public IList<Models.Image> Images { get; set; }
+        public IList<Service.DTO.ImageModel> Images { get; set; }
         public int CategoryId { get; set; }
     }
 }

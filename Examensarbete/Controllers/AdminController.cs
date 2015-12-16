@@ -8,16 +8,18 @@ using Domain.Entities;
 using Examensarbete.Models;
 using Examensarbete.ViewModels;
 using System.IO;
+using AutoMapper;
+using Service.Interface;
 
 namespace Examensarbete.Controllers
 {
     [Authorize(Roles="Administrator")]
     public class AdminController : Controller
     {
-        private ICategoryRepository categoryRepository;        
-        public AdminController(ICategoryRepository categoryRepository) 
+        private ICategoryService categoryService;
+        public AdminController(ICategoryService categoryService) 
         {
-            this.categoryRepository = categoryRepository;        
+            this.categoryService = categoryService;
         }
         public ActionResult Index()
         {
@@ -25,120 +27,116 @@ namespace Examensarbete.Controllers
         }
         public ActionResult Categories()
         {
-            return View(categoryRepository.Categories);
+            IEnumerable<Service.DTO.CategoryModel> categoryModels = categoryService.GetAllCategories();
+            
+            
+            return View(categoryModels);
         }
 
         public ActionResult Category(int id)
         {
-            Category category = categoryRepository.Get(id);
-            return View(category);
+            Service.DTO.CategoryModel categoryModel = categoryService.GetById(id);
+            return View(categoryModel);
         }
 
         [HttpGet]
         public ActionResult AddCategory()
         {
-            Category category = new Category();
-            return View(category);
+            Service.DTO.CategoryModel categoryModel = new Service.DTO.CategoryModel();
+            return View(categoryModel);
         }
 
         [HttpPost]
-        public ActionResult AddCategory(Category category, IEnumerable<HttpPostedFileBase> images)
+        public ActionResult AddCategory(Service.DTO.CategoryModel category, IEnumerable<HttpPostedFileBase> images)
         {
-            Domain.Entities.Image imageToSave = new Domain.Entities.Image();
-            category.Images = new List<Domain.Entities.Image>();
-            if (images != null)
+            if(!ModelState.IsValid)
             {
-                foreach (HttpPostedFileBase image in images)
-                {
-                    //TODO: Felmeddelande om filen inte är en bild
-                    if (IsImage(image) == false) return RedirectToAction("AddCategory");
-
-                    imageToSave = new Domain.Entities.Image();
-                    imageToSave.ImageData = new byte[image.ContentLength];
-                    imageToSave.ImageMimeType = image.ContentType;
-                    image.InputStream.Read(imageToSave.ImageData, 0, image.ContentLength);
-                    category.Images.Add(imageToSave);
-                }
+                return View(category);
             }
-            
-            Category c = categoryRepository.Add(category);
 
-            return RedirectToAction("Category", new { id = c.Id });
+            //Service.DTO.ImageModel imageToSave = new Service.DTO.ImageModel();
+            //category.Images = new List<Service.DTO.ImageModel>();
+            //if (images != null)
+            //{
+            //    foreach (HttpPostedFileBase image in images)
+            //    {
+                    
+            //        if (image != null)
+            //        {
+            //            //TODO: Felmeddelande om filen inte är en bild
+            //            if (IsImage(image) == false) return RedirectToAction("AddCategory");
+
+            //            imageToSave = new Service.DTO.ImageModel();
+            //            imageToSave.ImageData = new byte[image.ContentLength];
+            //            imageToSave.ImageMimeType = image.ContentType;
+            //            image.InputStream.Read(imageToSave.ImageData, 0, image.ContentLength);
+            //            category.Images.Add(imageToSave);
+
+            //        }
+            //    }
+            //}
+
+            Service.DTO.CategoryModel cat = categoryService.SaveCategory(category);
+            //TODO: Maybe check if 'cat' is null, meaning it wasn't saved
+
+            return RedirectToAction("Category", new { id = cat.Id });
         }
-        public ActionResult UpdateCategory(Category category )
+        public ActionResult UpdateCategory(Service.DTO.CategoryModel categoryModel )
         {
-            categoryRepository.UpdateCategoryNameAndInfo(category.Id, category.Name, category.Description);
-            return RedirectToAction("Category", new{id= category.Id});
+            if (!ModelState.IsValid) return View(categoryModel);
+
+            categoryService.UpdateCategoryNameAndDesc(categoryModel);
+            return RedirectToAction("Category", new { id = categoryModel.Id });
         }
 
         public FileContentResult GetImage(int imageId,int categoryId) 
         {
-            Category category = categoryRepository.Get(categoryId);
-            if (category != null) { 
-                if(category.Images!= null)
-                    return File(category.Images.Where(i=>i.Id==imageId).First().ImageData, category.Images.Where(im=>im.Id==imageId).First().ImageMimeType); 
-            }
-            return null;
+            Service.DTO.ImageModel imageModel = categoryService.GetImage(categoryId, imageId);
+            return File(imageModel.ImageData, imageModel.ImageMimeType); 
         }
 
-        //public FileContentResult GetImage(int imageId)
-        //{
-        //    Domain.Entities.Image imageEntity = categoryRepository.GetImage(imageId);
-
-        //    if (imageEntity != null)
-        //        return File(imageEntity.ImageData, imageEntity.ImageMimeType);
-        //    else
-        //        return null;
-        //}
-
         [HttpGet]
-        public ActionResult AddPriceToCategory(int id,string date=null)
+        public ActionResult AddPriceToCategory(int id,string date)
         {
             DateTime dtDate;
-            if (date == null) date = DateTime.Now.ToString("yyyy-MM-dd");
             bool dateValid = DateTime.TryParse(date, out dtDate);
             dtDate = dateValid ? dtDate : DateTime.Now;
-            Category category = categoryRepository.Get(id);
-            AddPriceViewModel addPriceModel;
-            if(category.PricePerDay.ToList().Find(m=>m.CheckinDate==dtDate)==null)
-                addPriceModel = new AddPriceViewModel() { CategoryId=id,FirstDay=dtDate,LastDay=dtDate,Price=0};
-            else
-                addPriceModel = new AddPriceViewModel() { CategoryId = id, FirstDay = dtDate, LastDay = dtDate, Price = category.PricePerDay.ToList().Find(m=>m.CheckinDate==dtDate).Price };
+
+            Service.DTO.CategoryModel categoryModel = categoryService.GetById(id);
+            AddPriceViewModel addPriceModel = new AddPriceViewModel() { CategoryId = id, FirstDay = dtDate, LastDay = dtDate,Price=0 };
+            if (categoryModel.PricePerDay.Any(m => m.CheckinDate.Date == dtDate.Date))
+                addPriceModel.Price = categoryModel.PricePerDay.First(m => m.CheckinDate.Date == dtDate.Date).Price;
+            
             return View(addPriceModel);
         }
         [HttpPost]
         public ActionResult AddPriceToCategory(AddPriceViewModel prices)
         {
-            if (prices.CategoryId != 0)
-            {
-                DateTime day = prices.FirstDay;
-                while (day <= prices.LastDay)
-                {
-                    categoryRepository.AddOrUpdateDaypriceForCategory(prices.CategoryId, prices.Price, day);
-                    day = day.AddDays(1);
-                }
-                return RedirectToAction("Category", new { id = prices.CategoryId });
-            }
+            //TODO: Sätta en maxgräns för hur många dagar man kan spara pris för. ?
+            if (!ModelState.IsValid) return View(prices);
 
-            return RedirectToAction("Categories");
+            categoryService.AddOrUpdateCategoryPrice(prices.CategoryId, prices.Price, prices.FirstDay, prices.LastDay);
+            return RedirectToAction("Category", new { id = prices.CategoryId });
+
         }
         public ActionResult Room()
         {
-            IEnumerable<Room> rooms = categoryRepository.GetAllRooms();
-            IEnumerable<SelectListItem> categories = categoryRepository.Categories.Select(c=>
+            IEnumerable<Service.DTO.RoomModel> rooms = categoryService.GetAllRooms();
+            IEnumerable<SelectListItem> categories = categoryService.GetAllCategories().Select(c=>
                                                        new SelectListItem() {
                                                            Text = c.Name, 
                                                            Value = c.Id.ToString() 
                                                        }
-                                                    ).ToList();
+                                                    ).ToList(); 
             ViewModels.RoomViewModel viewModel = new ViewModels.RoomViewModel() { Rooms=rooms,Categories=categories};
             return View(viewModel);
         }
         [HttpPost]
-        public ActionResult UpdateRoom(Room roomModel, int categoryId)
+        public ActionResult UpdateRoom(Service.DTO.RoomModel roomToUpdate, int categoryId)
         {
-            roomModel.TheCategory = new Category(){Id=categoryId};
-            categoryRepository.UpdateRoom(roomModel);
+            if (String.IsNullOrEmpty(roomToUpdate.RoomNumber)) return RedirectToAction("Room");
+            roomToUpdate.TheCategory = new Service.DTO.CategoryModel() { Id = categoryId };
+            categoryService.UpdateRoom(roomToUpdate);
             return RedirectToAction("Room");
         }
 
@@ -147,8 +145,8 @@ namespace Examensarbete.Controllers
         {
             AddRoomViewModel addRoomModel = new AddRoomViewModel();
             List<SelectListItem> listItems = new List<SelectListItem>();
-            IEnumerable<Category> categories = categoryRepository.Categories.ToList();
-            foreach(Category category in categories)
+            IEnumerable<Service.DTO.CategoryModel> categories = categoryService.GetAllCategories().ToList();
+            foreach(Service.DTO.CategoryModel category in categories)
             {
                 listItems.Add(new SelectListItem() { Text = category.Name, Value = category.Id.ToString() });
             }
@@ -158,18 +156,23 @@ namespace Examensarbete.Controllers
         [HttpPost]
         public ActionResult AddRoom(AddRoomViewModel addRoomModel,int categoryId)
         {
-            Room room = new Room() { RoomNumber = addRoomModel.RoomNumber };
-            categoryRepository.AddRoom(room, categoryId);
+            if (!ModelState.IsValid) return RedirectToAction("AddRoom");
+            Service.DTO.RoomModel room = new Service.DTO.RoomModel() 
+                                                    { RoomNumber = addRoomModel.RoomNumber, 
+                                                      TheCategory = new Service.DTO.CategoryModel() { Id=categoryId} 
+                                                    };
+            categoryService.AddRoom(room);
             return RedirectToAction("Room");
         }
 
+        //TODO:Rename action method, to categoryImages??
         //Handle images in a category
         //No point of loading ImageMimeType and ImageData
         public ActionResult Images(int id)
         {
             HandleImagesViewModel handleImages = new HandleImagesViewModel();
-            handleImages.Images = (from img in categoryRepository.Get(id).Images
-                                  select new Examensarbete.Models.Image() { Id = img.Id, Info = img.Info }).ToList();
+            handleImages.Images = (from img in categoryService.GetById(id).Images
+                                  select new Service.DTO.ImageModel() { Id = img.Id, Info = img.Info }).ToList();
             handleImages.CategoryId = id;
             ViewBag.catId = id;
             return View(handleImages);
@@ -178,30 +181,32 @@ namespace Examensarbete.Controllers
         [HttpPost]
         public ActionResult DeleteImage(int imageId, int categoryId)
         {
-            categoryRepository.DeleteImage(imageId, categoryId);
+            categoryService.DeleteImage(imageId, categoryId);
             return RedirectToAction("Images", new { id=categoryId});
         }
 
         [HttpPost]
-        public ActionResult UpdateImage(Examensarbete.Models.Image image,int categoryId)
+        public ActionResult UpdateImage(Service.DTO.ImageModel imageModel,int categoryId)
         {
-            Domain.Entities.Image imageEntity = new Domain.Entities.Image() { Id=image.Id,Info=image.Info};
-            categoryRepository.UpdateImage(imageEntity, categoryId);
+            categoryService.UpdateImageInfo(imageModel, categoryId);
             return RedirectToAction("Images", new { id = categoryId });
         }
 
         [HttpPost]
         public ActionResult AddImage(HttpPostedFileBase imageFile,HandleImagesViewModel handleImg,int categoryId)
         {
+            //Ingen bild vald, felmeddelande
+            if (imageFile == null) return RedirectToAction("Images", new { id = categoryId });
+
             //TODO: Felmeddelande om filen inte är en bild
             if (IsImage(imageFile) == false) return RedirectToAction("Images", new { id = categoryId });
 
-            Domain.Entities.Image imageEntity = new Domain.Entities.Image();
-            imageEntity.Info = handleImg.NewImage.Info;
-            imageEntity.ImageData = new byte[imageFile.ContentLength];
-            imageEntity.ImageMimeType = imageFile.ContentType;
-            imageFile.InputStream.Read(imageEntity.ImageData, 0, imageFile.ContentLength);
-            categoryRepository.AddImageToCategory(imageEntity, categoryId);
+            Service.DTO.ImageModel imageModel = new Service.DTO.ImageModel();
+            imageModel.Info = handleImg.NewImage.Info;
+            imageModel.ImageData = new byte[imageFile.ContentLength];
+            imageModel.ImageMimeType = imageFile.ContentType;
+            imageFile.InputStream.Read(imageModel.ImageData, 0, imageFile.ContentLength);
+            categoryService.AddImageToCategory(imageModel, categoryId);
             return RedirectToAction("Images",new {id=categoryId});
         }
 

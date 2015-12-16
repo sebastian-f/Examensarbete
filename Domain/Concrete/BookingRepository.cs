@@ -14,6 +14,7 @@ namespace Domain.Concrete
     {
         private EFDbContext context = new EFDbContext();
 
+        //TODO: Mabye move some code to service
         //Check if there are enought available rooms in a category
         //First check if category has a price on the choosen dates
         public bool CheckAvailableRooms(int categoryId, int numberOfRooms, DateTime checkinDate, DateTime checkOutDate)

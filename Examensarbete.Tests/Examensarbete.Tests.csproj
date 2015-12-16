@@ -116,6 +116,10 @@
       <Project>{78AB2730-AE3A-4006-8509-7313600D225A}</Project>
       <Name>Examensarbete</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Service\Service.csproj">
+      <Project>{39cd3934-a3c9-4dd7-8de6-4e9408340a10}</Project>
+      <Name>Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Repositories\" />

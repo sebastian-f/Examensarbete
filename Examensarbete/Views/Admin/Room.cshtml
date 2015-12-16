@@ -1,4 +1,4 @@
-﻿@using Domain.Entities
+﻿@using Service.DTO
 @model Examensarbete.ViewModels.RoomViewModel
 @{
     ViewBag.Title = "Rum";
@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (Room room in Model.Rooms)
+        @foreach (RoomModel room in Model.Rooms)
         {
             <text>
         <tr>
@@ -60,11 +60,12 @@
                 <div class="modal-body">
 
                     <div>
-                        @if (Model.Rooms.Count()!=0) { @Html.HiddenFor(m => m.Rooms.First().Id); }
+                        @if (Model.Rooms.Count()!=0) { @Html.HiddenFor(m => m.RoomToUpdate.Id); }
                     </div>
                     <div class="form-group">
                         @Html.Label("Rumsnummer/namn")
-                        @if (Model.Rooms.Count() != 0) { @Html.TextBoxFor(m => m.Rooms.First().RoomNumber, new { @class = "form-control" }); }
+                        @if (Model.Rooms.Count() != 0) { @Html.TextBoxFor(m => m.RoomToUpdate.RoomNumber, new { @class = "form-control" }); }
+                        @Html.ValidationMessageFor(m => m.RoomToUpdate.RoomNumber)
                     </div>
                     <div class="form-group">
                         @Html.Label("Välj kategori")
@@ -101,9 +102,12 @@
     {
         var roomObject = findRoomById(roomId);
         document.getElementById("modalTitle").innerHTML = roomObject.roomNumber;
-        document.getElementById("Id").value = roomId;
-        document.getElementById("RoomNumber").value = roomObject.roomNumber;
+        document.getElementById("RoomToUpdate_Id").value = roomId;
+        document.getElementById("RoomToUpdate_RoomNumber").value = roomObject.roomNumber; 
+            //TODO: Om man byter namn på propertyn RoomToUpdate ändras id och det fungerar inte
         document.getElementById("categoryId").value = roomObject.categoryId;
+
+
     }
 
     function findRoomById(theId)
@@ -114,3 +118,8 @@
         }
     }
 </script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

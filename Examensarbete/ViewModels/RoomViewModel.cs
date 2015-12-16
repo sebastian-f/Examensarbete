@@ -8,7 +8,8 @@ namespace Examensarbete.ViewModels
 {
     public class RoomViewModel
     {
-        public IEnumerable<Domain.Entities.Room> Rooms { get; set; }
+        public IEnumerable<Service.DTO.RoomModel> Rooms { get; set; }
         public IEnumerable<SelectListItem> Categories { get; set; }
+        public Service.DTO.RoomModel RoomToUpdate { get; set; }
     }
 }

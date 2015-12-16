@@ -30,7 +30,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.4.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -39,8 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\BookingModel.cs" />
+    <Compile Include="DTO\CategoryModel.cs" />
+    <Compile Include="DTO\DatePriceModel.cs" />
+    <Compile Include="DTO\ImageModel.cs" />
+    <Compile Include="DTO\RoomModel.cs" />
     <Compile Include="Implementation\BookingService.cs" />
+    <Compile Include="Implementation\CategoryService.cs" />
     <Compile Include="Interface\IBookingService.cs" />
+    <Compile Include="Interface\ICategoryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +59,9 @@
       <Project>{bd186a66-730b-41e6-868f-d90080e40cb5}</Project>
       <Name>Domain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

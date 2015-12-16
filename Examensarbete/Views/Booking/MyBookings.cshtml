@@ -1,4 +1,4 @@
-﻿@using Examensarbete.Models
+﻿@using Service.DTO
 @model IList<BookingModel>
 @{
     ViewBag.Title = "Mina bokningar";
@@ -27,3 +27,9 @@
 
 
 </table>
+
+@if (Model.Count == 0)
+{
+    <h5>Det finns inga bokningar.</h5>
+}
+<br /><br /><br />

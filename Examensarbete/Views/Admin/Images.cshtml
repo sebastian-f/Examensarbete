@@ -19,7 +19,7 @@
 
 <table>
 
-    @foreach (Image image in Model.Images)
+    @foreach (Service.DTO.ImageModel image in Model.Images)
     {
         <tr style="padding-bottom:20px">
             <td style="padding-right:50px">
@@ -121,10 +121,10 @@
 }
 
 
-@foreach(Image img in Model.Images)
+@foreach(Service.DTO.ImageModel img in Model.Images)
 {
     Html.RenderPartial("UpdateImagePartial",img);
-    Html.RenderPartial("ImagesPartial", img);
+    Html.RenderPartial("DeleteImagePartial", img);
 }
 
 

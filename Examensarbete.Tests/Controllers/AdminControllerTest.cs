@@ -9,6 +9,7 @@ using Examensarbete.Controllers;
 using Domain.Abstract;
 using Moq;
 using Domain.Entities;
+using Service.Interface;
 
 namespace Examensarbete.Tests.Controllers
 {
@@ -19,6 +20,7 @@ namespace Examensarbete.Tests.Controllers
         public void TestIfIndexMethodReturnsModelWithCategories()
         {
             // Arrange    
+            Mock<ICategoryService> mockService = new Mock<ICategoryService>();
             Mock<ICategoryRepository> mock = new Mock<ICategoryRepository>();
             mock.Setup(m => m.Categories).Returns(new Category[] {        
                 new Category {Id = 1, Name = "Dubbelrum"},        
@@ -27,7 +29,7 @@ namespace Examensarbete.Tests.Controllers
                 new Category {Id = 4, Name = "Familjerum"}    });
 
             // Arrange    
-            AdminController controller = new AdminController(mock.Object);
+            AdminController controller = new AdminController(mockService.Object);
 
             // Act   
             ViewResult result = controller.Categories() as ViewResult;

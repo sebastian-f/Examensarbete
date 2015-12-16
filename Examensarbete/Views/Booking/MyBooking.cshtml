@@ -15,5 +15,9 @@
        Incheckning: @Model.CheckInDate.ToShortDateString() <br />
        Utcheckning: @Model.CheckOutDate.ToShortDateString() <br />
        Pris: <br />
+        @foreach(RoomCategory room in Model.RoomCategories)
+        {
+            <span>@room.NumberOfRooms @room.Name</span>
+        }
     </div>
 </div>

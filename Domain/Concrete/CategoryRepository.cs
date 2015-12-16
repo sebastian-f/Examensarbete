@@ -12,11 +12,12 @@ namespace Domain.Concrete
     public class CategoryRepository : ICategoryRepository
     {
         private EFDbContext context = new EFDbContext();
+
+        //TODO:Change to method
         public IEnumerable<Category> Categories
         {
             get
             {
-                IEnumerable<Category> categories = context.Categories.Include(p =>  p.PricePerDay).Include(i=>i.Images);
                 return context.Categories.Include(i=>i.Images);
             }
         }
@@ -61,13 +62,11 @@ namespace Domain.Concrete
         }
 
 
-        public void AddRoom(Room room, int categoryId)
+        public void AddRoom(Room room)
         {
-            if(room.Id==0)
-            {
-                Category category = Get(categoryId);
-                room.TheCategory = category;
-            }
+            Category category = Get(room.TheCategory.Id);
+            room.TheCategory = category;
+            
             context.Rooms.Add(room);
             context.SaveChanges();
         }
@@ -95,7 +94,7 @@ namespace Domain.Concrete
             return context.Rooms.Include(c=>c.TheCategory);
         }
 
-
+        //Update Room number and category
         public void UpdateRoom(Room room)
         {
             Room roomEntity = context.Rooms.Where(r => r.Id == room.Id).FirstOrDefault();
@@ -130,7 +129,7 @@ namespace Domain.Concrete
             context.SaveChanges();
         }
 
-        public void UpdateImage(Image image,int categoryId)
+        public void UpdateImageInfo(Image image,int categoryId)
         {
             Category category = context.Categories.Where(c => c.Id == categoryId).First();
             category.Images.Where(im => im.Id == image.Id).First().Info = image.Info;
@@ -155,6 +154,13 @@ namespace Domain.Concrete
                 return true;
             else
                 return false;
+        }
+
+
+        public void UpdateCategory(Category category)
+        {
+            context.Entry(category).State = System.Data.Entity.EntityState.Modified;
+            context.SaveChanges();
         }
     }
 }

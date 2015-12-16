@@ -2,21 +2,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace Domain.Entities
+namespace Examensarbete.Models
 {
-    public class Category
+    public class CategoryModel
     {
         public int Id { get; set; }
-        //TODO: Delete display name
         [Display(Name="Namn på kategorin")]
-        [Required]
+        [Required(ErrorMessage="Du måste välja ett namn på kategorin")]
         public string Name { get; set; }
         public string Description { get; set; }
-        public virtual ICollection<DatePrice> PricePerDay { get; set; }
+        public virtual ICollection<DatePriceModel> PricePerDay { get; set; }
         public virtual ICollection<Image> Images { get; set; }
-
     }
 }

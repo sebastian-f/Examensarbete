@@ -1,5 +1,4 @@
-﻿@using Domain.Entities;
-@model IEnumerable<Domain.Entities.Category>
+﻿@model IEnumerable<Service.DTO.CategoryModel>
 
 @{
     ViewBag.Title = "Kategorier";
@@ -9,7 +8,7 @@
 <h2>Kategorier</h2>
 
 
-@foreach (Category category in Model)
+@foreach (Service.DTO.CategoryModel category in Model)
 { 
     <text>
     @Html.ActionLink(category.Name,"Category",new {id=category.Id})

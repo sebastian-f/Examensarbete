@@ -39,6 +39,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.4.1.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Ninject">
       <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
@@ -184,7 +187,9 @@
     <Compile Include="Models\AddPriceViewModel.cs" />
     <Compile Include="Models\AddRoomViewModel.cs" />
     <Compile Include="Models\BookingModel.cs" />
+    <Compile Include="Models\CategoryModel.cs" />
     <Compile Include="Models\CategoryViewModel.cs" />
+    <Compile Include="Models\DatePriceModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Image.cs" />
     <Compile Include="Models\MakeBooking.cs" />
@@ -261,10 +266,9 @@
     <Content Include="Views\Booking\MyBookings.cshtml" />
     <Content Include="Views\Booking\MyBooking.cshtml" />
     <Content Include="Views\Admin\Room.cshtml" />
-    <Content Include="Views\Admin\RoomPartial.cshtml" />
     <Content Include="Views\Home\Rooms.cshtml" />
     <Content Include="Views\Admin\Images.cshtml" />
-    <Content Include="Views\Admin\ImagesPartial.cshtml" />
+    <Content Include="Views\Admin\DeleteImagePartial.cshtml" />
     <Content Include="Views\Admin\UpdateImagePartial.cshtml" />
   </ItemGroup>
   <ItemGroup>

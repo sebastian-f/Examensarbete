@@ -32,6 +32,7 @@ namespace Examensarbete.Infrastructure
             kernel.Bind<ICategoryRepository>().To<CategoryRepository>();
             kernel.Bind<IBookingRepository>().To<BookingRepository>();
             kernel.Bind<IBookingService>().To<BookingService>();
+            kernel.Bind<ICategoryService>().To<CategoryService>();
         }
     }
 }

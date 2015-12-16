@@ -45,17 +45,18 @@ Checkut:
                 <a href="#" data-toggle="modal" data-target="#myModal@(@Model.RoomCategories[i].CategoryId)"><i>Mer info</i></a>
 
                 </td><td>
-            @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" }) 
+            @Html.TextBoxFor(m => m.RoomCategories[i].NumberOfRooms, new {@type="number",@min="0", @class="form-control", id=Model.RoomCategories[i].CategoryId, onchange = "countSum(this,"+ Model.RoomCategories[i].PriceForChoosenDates + ")" })
                 </td>
                 <td>
                     @Html.Label(Model.RoomCategories[i].PriceForChoosenDates.ToString()) kr
                 </td>
                 <td style="text-align:right">
-                    <span id="sumCat@(Model.RoomCategories[i].CategoryId)">0</span> kr
+                     @*Show the price for a category multiplied with the number of choosen rooms, if any*@
+                    <span id="sumCat@(Model.RoomCategories[i].CategoryId)">@(Model.RoomCategories[i].NumberOfRooms * Model.RoomCategories[i].PriceForChoosenDates)</span> kr
                 </td>
             </tr>
         }
-        <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">0</span> kr</td></tr>
+        <tr><td></td><td></td><td></td><td style="text-align:right"><span id="totalSum">räknar ut pris...</span> kr</td></tr>
         <tr><td>@Html.ActionLink("Tillbaka", "Index", null, new { @class = "btn btn-info", style = "float:left" })</td><td></td><td></td><td style="text-align:right"><input type="submit" value="Nästa" class="btn btn-info"/></td></tr>
     }
 
@@ -161,7 +162,16 @@ Checkut:
         var totalSum = 0;
         var numberOfRooms = 0;
         catIds.forEach(function (cId) {
+            
+            if (isNaN($("#" + cId.id).val()))
+            {
+                $("#" + cId.id).val("0");
+                return;
+            }
+            if ($("#" + cId.id).val() == "") { return; }
+
             numberOfRooms = parseInt($("#" + cId.id).val());
+            if (numberOfRooms < 0) numberOfRooms = 0;
             $("#sumCat" + cId.id).text(numberOfRooms * cId.price);
             totalSum = totalSum + parseInt($("#sumCat" + cId.id).text());
         });

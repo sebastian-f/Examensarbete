@@ -4,15 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Service.DTO
 {
-    public class Booking
+    public class BookingModel
     {
         public int Id { get; set; }
-        public virtual ICollection<Room> Rooms { get; set; }
+        public virtual ICollection<RoomModel> Rooms { get; set; }
         public DateTime CheckInDate { get; set; }
         public DateTime CheckOutDate { get; set; }
         public string UserId { get; set; }
-        //public double Price { get; set; }
     }
 }
