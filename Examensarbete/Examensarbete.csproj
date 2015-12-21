@@ -270,6 +270,10 @@
     <Content Include="Views\Admin\Images.cshtml" />
     <Content Include="Views\Admin\DeleteImagePartial.cshtml" />
     <Content Include="Views\Admin\UpdateImagePartial.cshtml" />
+    <Content Include="Views\Home\RoomsPartial.cshtml" />
+    <Content Include="Views\Home\_AllRoomsPartial.cshtml" />
+    <Content Include="Views\Admin\DiscountOffer.cshtml" />
+    <Content Include="Views\Admin\Employees.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

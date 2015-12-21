@@ -1,6 +1,4 @@
-﻿using Domain.Abstract;
-using Domain.Entities;
-using Examensarbete.Models;
+﻿using Examensarbete.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,6 +80,7 @@ namespace Examensarbete.Controllers
         public ActionResult Rooms()
         {
             MakeBooking booking = GetMakeBookingSession();
+            if (booking == null) return RedirectToAction("Index");
 
             if (TempData["isAvailable"] != null)
             {
@@ -135,8 +134,11 @@ namespace Examensarbete.Controllers
         public ActionResult Confirm()
         {
             MakeBooking bookingSession = GetMakeBookingSession();
-            int numberOfRooms = bookingSession.RoomCategories.Sum(r => r.NumberOfRooms);
-            if (numberOfRooms < 1) return RedirectToAction("Rooms"); 
+
+             //If bookingSession = null
+            if (bookingSession == null) return RedirectToAction("Rooms");
+            //If no rooms have been selected
+            if (bookingSession.RoomCategories.Sum(r => r.NumberOfRooms) == 0) return RedirectToAction("Rooms");
 
              //TODO: The price should be calculated in a service-method
             bookingSession.Price = bookingSession.RoomCategories.Sum(c=>c.NumberOfRooms*c.PriceForChoosenDates);
@@ -240,7 +242,7 @@ namespace Examensarbete.Controllers
             else
             {
                 //If the dates are not the same, we need to get available rooms for the new dates
-                if (booking.CheckInDate.Date != savedBookingSession.CheckInDate.Date && booking.CheckOutDate.Date != savedBookingSession.CheckOutDate.Date)
+                if (booking.CheckInDate.Date != savedBookingSession.CheckInDate.Date || booking.CheckOutDate.Date != savedBookingSession.CheckOutDate.Date)
                 {
                     #region  changethiscode
                     List<RoomCategory> allCategories = GetAllRoomCategories().ToList();

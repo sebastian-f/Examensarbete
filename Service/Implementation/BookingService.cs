@@ -44,6 +44,9 @@ namespace Service.Implementation
 
         public int SaveBooking(BookingModel bookingModel)
         {
+            //Check if there are no room(category) selected
+            if (bookingModel.Rooms.Count == 0) return 0;
+
             Booking bookingEntity = Mapper.Map<BookingModel, Booking>(bookingModel);
             int bookingId = bookingRepository.SaveBooking(bookingEntity);
             return bookingId;

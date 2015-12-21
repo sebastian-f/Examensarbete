@@ -4,6 +4,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 using Examensarbete.Infrastructure;
+using System.Configuration;
 
 namespace Examensarbete.Models
 {
@@ -47,9 +48,11 @@ namespace Examensarbete.Models
             ApplicationUserManager userMgr = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
             ApplicationRoleManager roleMgr = new ApplicationRoleManager(new RoleStore<IdentityRole>(context));
             string roleName = "Administrator";
-            string userName = "sefor07@hotmail.com";
+            string userName = ConfigurationManager.AppSettings["adminEmail"];
+            //string userName = "sefor07@hotmail.com";
             string password = "Pass-123";
-            string email = "sefor07@hotmail.com";
+            string email = ConfigurationManager.AppSettings["adminEmail"];
+            //string email = "sefor07@hotmail.com";
             if (!roleMgr.RoleExists(roleName))
             {
                 roleMgr.Create(new IdentityRole(roleName));

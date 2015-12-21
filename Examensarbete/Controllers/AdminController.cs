@@ -210,6 +210,16 @@ namespace Examensarbete.Controllers
             return RedirectToAction("Images",new {id=categoryId});
         }
 
+        public ActionResult DiscountOffer()
+        {
+            return View();
+        }
+
+        public ActionResult Employees()
+        {
+            return View();
+        }
+
         [NonAction]
         private bool IsImage(HttpPostedFileBase imageFile)
         {

@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="file:///C:/PROGRAM FILES (X86)/MICROSOFT VISUAL STUDIO 12.0/COMMON7/IDE/EXTENSIONS/MICROSOFT/ARCHITECTURE TOOLS/EXTENSIBILITY/Logging/ReverseEngineeringLog.xslt"?>
+<Log xmlns="http://schemas.microsoft.com/VisualStudio/2010/CodeGen.RE.Log" Label="Code Generation/Text Transformation Log">
+  <MessageClass Name="Message" Label="Message" Option="Show informational messages" />
+  <MessageClass Name="Warning" Label="Warning" Option="Show warnings" />
+  <MessageClass Name="Error" Label="Error" Option="Show errors" />
+  <MessageClass Name="Property" Label="Property" Option="Show metadata" />
+  <MessageClass Name="Diagnostic" Label="Message" Option="Show diagnostic messages" />
+  <Message Timestamp="2015-12-20T23:21:08" Importance="High" Text="Reverse Engineering Started." />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: '32c52ea0-3242-4433-a40d-8d341a84f390' -  (ClassifierTemplateParameter)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'Integer' -  (PrimitiveType)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain' -  (Package)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities' -  (Package)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Booking' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Category' -  (Class)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Medium" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room' -  (Class)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room::Bookings' -  (Property)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room::Id' -  (Property)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room::Room' -  (Operation)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room::RoomNumber' -  (Property)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::Domain::Entities::Room::TheCategory' -  (Property)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System' -  (Package)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Collections' -  (Package)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Collections::Generic' -  (Package)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Collections::Generic::ICollection' -  (Interface)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'ModelingProject1::System::Collections::Generic::ICollection&lt;Booking‎&gt;' -  (Interface)   (partially reverse engineered - definition not updated) " />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Element reverse engineered into the UML model: 'String' -  (PrimitiveType)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Domain::Entities::Room to ModelingProject1::Domain::Entities::Category (Association)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="Diagnostic" Text="Relationship reverse engineered into the UML model: ModelingProject1::Domain::Entities::Room to ModelingProject1::System::Collections::Generic::ICollection&lt;Booking‎&gt; (Association)" />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="High" Text="(1) type(s) fully reverse engineered." />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="High" Text="(4) type(s) partially reverse engineered.  These types were not included in the original selection so their full definitions are not reverse engineered.  Instead, this shallow operation has simply ensured these types exist in the UML model because they are needed in order to fully describe other elements." />
+  <Message Timestamp="2015-12-20T23:21:09" Importance="High" Text="The reverse engineering operation completed with (0) error(s), and (0) warning(s)." />
+</Log>

@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Domain.Abstract;
+using Service.Interface;
 
 namespace Examensarbete.Controllers
 {
     public class HomeController : Controller
     {
-
+        ICategoryService categoryService;
+        public HomeController(ICategoryService categoryService)
+        {
+            this.categoryService = categoryService;
+        }
         public ActionResult Index()
         {
             return View();
@@ -24,7 +28,8 @@ namespace Examensarbete.Controllers
 
         public ActionResult Rooms()
         {
-            return View();
+            IList<Service.DTO.CategoryModel> categories = categoryService.GetAllCategories().ToList();
+            return View(categories);
         }
 
         public ActionResult Contact()
@@ -32,6 +37,12 @@ namespace Examensarbete.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        [ChildActionOnly]
+        public ActionResult AllRooms()
+        {
+            return PartialView("RoomsPartial",categoryService.GetAllCategories());
         }
     }
 }

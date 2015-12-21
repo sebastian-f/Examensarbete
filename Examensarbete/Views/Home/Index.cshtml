@@ -46,19 +46,42 @@
 <div style="padding-top: 50px; height: 400px; background-color: #eee;height:100vh;background-image:url('https://upload.wikimedia.org/wikipedia/commons/6/65/2011-04-27_Kviknes_hotell.jpg');background-size:100% 100%;color:#333">
     <div style="height:300px;border-radius:5px;padding-left:50px; padding-top:10px;" class="gradint-opacity jumbotron">
         <h1>Hotellet</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+        <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mauris lectus, ultricies eu dictum eget, hendrerit ut nulla. Phasellus at.</p>
         <p>@Html.ActionLink("Boka »", "Index", "Booking", null, new { @class = "btn btn-primary btn-lg" })</p>
     </div>
 </div>
-    <div class="jumbotron">
-        <h1>Hotellet</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p>@Html.ActionLink("Boka »", "Index", "Booking", null, new { @class = "btn btn-primary btn-lg" })</p>
+   
+<div class="row" style="margin-left:0px;margin-right:0px">
+    <div class="col-md-4">
+        <h2>Bokning</h2>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+            Sed a libero eu felis aliquet maximus sed sed lorem. Vestibulum ante ipsum primis in faucibus.
+        </p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Booking")">Boka &raquo;</a></p>
     </div>
+    <div class="col-md-4">
+        <h2>Våra rum</h2>
+        <p>Suspendisse pretium sodales dolor, eget bibendum metus euismod quis. Aliquam commodo leo dolor, a rhoncus sapien interdum eget. Proin et sagittis quam.</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Home")#sectionRooms">Våra rum &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Om hotellet</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas rhoncus turpis at sagittis dictum. Mauris ac est lobortis, ornare.</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Home")#sectionAbout">Om hotellet &raquo;</a></p>
+    </div>
+</div>
+
 
 <div id="sectionRooms" style="padding-top: 50px; padding-left: 40px; height: 100vh; color: #ebebeb;background-color: #010101;">
     <h1>Våra rum</h1>
-    <a href="#" class="next-section">Next</a>
+    <br />
+    <p>Donec vel turpis sem. Suspendisse posuere a urna at sodales. Sed ultricies nisi id enim pulvinar consequat. <br />
+    In hac habitasse platea dictumst. Fusce lobortis arcu scelerisque libero fermentum ultricies. Lorem ipsum dolor sit.</p>
+    @*@{Html.RenderAction("AllRooms","Home");}*@
+    <a class="btn btn-default" href="@Url.Action("Rooms","Home")">Se våra rum &raquo;</a>
+    <br />
+    @*<a href="#" class="next-section">Next</a>*@
 </div>
 
 <div id="sectionAbout" style=" background-color: #eee" class="w3-row w3-border">
@@ -89,21 +112,19 @@
     <div class="col-md-4">
         <h2>Bokning</h2>
         <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a libero eu felis aliquet maximus sed sed lorem. Vestibulum ante ipsum primis in faucibus.
         </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Boka &raquo;</a></p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Booking")">Boka &raquo;</a></p>
     </div>
     <div class="col-md-4">
         <h2>Våra rum</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Våra rum &raquo;</a></p>
+        <p>Suspendisse pretium sodales dolor, eget bibendum metus euismod quis. Aliquam commodo leo dolor, a rhoncus sapien interdum eget. Proin et sagittis quam.</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Home")#sectionRooms">Våra rum &raquo;</a></p>
     </div>
     <div class="col-md-4">
         <h2>Om hotellet</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p>@Html.ActionLink("Om hotellet", "Contact", null, new { @class = "btn btn-default" })</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas rhoncus turpis at sagittis dictum. Mauris ac est lobortis, ornare.</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Home")#sectionAbout">Om hotellet &raquo;</a></p>
     </div>
 </div>
 
